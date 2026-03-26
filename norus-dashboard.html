@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTM — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --bg2:       #111827;
+  --bg3:       #1a2235;
+  --card:      #141c2e;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e8edf5;
+  --muted:     #7a8aa0;
+  --accent:    #e63030;
+  --accent2:   #ff4f4f;
+  --green:     #22c97a;
+  --green-bg:  rgba(34,201,122,0.1);
+  --red:       #ff5c5c;
+  --red-bg:    rgba(255,92,92,0.1);
+  --amber:     #f5a623;
+  --amber-bg:  rgba(245,166,35,0.1);
+  --purple:    #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --teal:      #2dd4bf;
+  --teal-bg:   rgba(45,212,191,0.1);
+  --radius:    14px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 240px;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  padding: 0 0 20px;
+}
+
+.logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.logo-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 20px 4px;
+  margin-top: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.18s;
+  position: relative;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.nav-item.active {
+  color: var(--accent2);
+  background: rgba(61,127,255,0.1);
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 6px; bottom: 6px;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px 0 0 2px;
+}
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-badge {
+  margin-right: auto;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 20px 0;
+  border-top: 1px solid var(--border);
+}
+.store-card {
+  background: var(--bg3);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.store-avatar {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+}
+.store-name { font-size: 13px; font-weight: 600; }
+.store-plan { font-size: 11px; color: var(--muted); }
+
+/* ── Main ── */
+.main {
+  margin-right: 240px;
+  min-height: 100vh;
+  padding: 28px 32px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.page-title { font-size: 22px; font-weight: 700; }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-ghost {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  color: var(--text);
+}
+.btn-ghost:hover { background: var(--bg3); }
+
+/* ── KPI Cards ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
+}
+.kpi-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.kpi-card.green::after  { background: var(--green); }
+.kpi-card.red::after    { background: var(--red); }
+.kpi-card.accent::after { background: var(--accent); }
+.kpi-card.amber::after  { background: var(--amber); }
+
+.kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.kpi-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.kpi-trend {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: flex; align-items: center; gap: 3px;
+}
+.kpi-trend.up   { background: var(--green-bg); color: var(--green); }
+.kpi-trend.down { background: var(--red-bg);   color: var(--red); }
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+  font-family: 'Tajawal', sans-serif;
+}
+.kpi-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+/* ── Middle Row ── */
+.mid-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.widget {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.widget-title {
+  font-size: 14px; font-weight: 700;
+  margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.widget-title span { color: var(--muted); font-size: 12px; font-weight: 400; cursor: pointer; }
+.widget-title span:hover { color: var(--accent2); }
+
+/* Donut Chart */
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.donut-svg { flex-shrink: 0; }
+.donut-legend { flex: 1; }
+.legend-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+.legend-label { display: flex; align-items: center; color: var(--muted); }
+.legend-val { font-weight: 700; font-size: 13px; }
+
+/* Bar Chart */
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label { font-size: 11px; color: var(--muted); width: 90px; text-align: right; flex-shrink: 0; }
+.bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--bg3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+.bar-val { font-size: 11px; font-weight: 700; width: 36px; text-align: left; }
+
+/* Balance Card */
+.balance-big {
+  font-size: 32px;
+  font-weight: 900;
+  font-family: 'Tajawal', sans-serif;
+  letter-spacing: -1px;
+  margin: 8px 0 4px;
+}
+.balance-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+.balance-actions { display: flex; gap: 8px; }
+.balance-btn {
+  flex: 1;
+  padding: 9px;
+  border-radius: var(--radius-sm);
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: all 0.18s;
+  text-align: center;
+}
+.balance-btn.primary { background: var(--accent); color: #fff; }
+.balance-btn.primary:hover { background: var(--accent2); }
+.balance-btn.ghost { background: var(--bg3); color: var(--text); border: 1px solid var(--border2); }
+.balance-btn.ghost:hover { background: var(--bg2); }
+.divider-line { height: 1px; background: var(--border); margin: 16px 0; }
+.pending-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.pending-label { color: var(--muted); }
+.pending-val { font-weight: 600; color: var(--amber); }
+
+/* ── Orders Table ── */
+.table-widget {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.table-header-row {
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.table-title { font-size: 14px; font-weight: 700; }
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-size: 12px; color: var(--muted);
+  cursor: text;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 11px; font-weight: 600;
+  color: var(--muted);
+  text-align: right;
+  padding: 10px 16px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.3px;
+}
+td {
+  padding: 13px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+.tracking-num {
+  font-family: 'Tajawal', monospace;
+  font-size: 12px;
+  color: var(--accent2);
+  font-weight: 600;
+}
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pill-green  { background: var(--green-bg);  color: var(--green); }
+.pill-amber  { background: var(--amber-bg);  color: var(--amber); }
+.pill-red    { background: var(--red-bg);    color: var(--red); }
+.pill-blue   { background: rgba(61,127,255,.15); color: var(--accent2); }
+.pill-purple { background: var(--purple-bg); color: var(--purple); }
+.pill-teal   { background: var(--teal-bg);   color: var(--teal); }
+
+.route-tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+  background: var(--bg3);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  padding: 5px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  transition: all 0.15s;
+}
+.action-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* ── Bottom Row ── */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+/* Activity */
+.activity-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.activity-text { font-size: 12px; line-height: 1.5; }
+.activity-time { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.activity-num { color: var(--accent2); font-weight: 700; }
+
+/* Tasks */
+.task-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg3);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+.task-item:hover { border-color: var(--border2); }
+.task-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.task-info { flex: 1; }
+.task-title { font-size: 12px; font-weight: 600; }
+.task-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.task-status {
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.kpi-card { animation: fadeUp 0.4s ease both; }
+.kpi-card:nth-child(1) { animation-delay: .05s; }
+.kpi-card:nth-child(2) { animation-delay: .10s; }
+.kpi-card:nth-child(3) { animation-delay: .15s; }
+.kpi-card:nth-child(4) { animation-delay: .20s; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+</style>
+<script>
+(function(){
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (!s) { window.location.href = "login.html"; return; }
+  try {
+    const session = JSON.parse(s);
+    if (new Date(session.expires_at) < new Date()) {
+      localStorage.removeItem("ztm_session");
+      sessionStorage.removeItem("ztm_session");
+      window.location.href = "login.html";
+    }
+  } catch(e) { window.location.href = "login.html"; }
+})();
+</script>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║       ZTM UNIFIED SIDEBAR    ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-img">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAyAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAgMEAQf/xAAwEAACAQMDAgMGBwAAAAAAAAABAgMABBEFEiExBhNBURQiMmFxgZGhBxUjQlL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+qaUpQClKUApSlAKi9R1i10xF8z5pZDiKCMZeQ+wH9TwKqdb1+6e6bTdHiSe9UZlkc/JbJ7se59h9ya5ttBt7d/tWqXsl/fN8xuG4jT2UcD9eT70BbprtzdRaeLWCS4lJBdIFLFAfXA6VLaJrjapeXFnLbmCeBVYrlXUg9ipq50bRrLRbVoLJCN5zJI7bmkbuWPc1SdnbOW51G0ub5D9pJI0cIG5FyeA3fNAblKUoBSlKAUpSgFKUoBSlKAUp0oABkgDrWc9xBbrl5o09Mk4rA1fUW0yy81ImlkJCRqvdj0H17ms9H05bRTcXG2a8k+aWT3PoPoKAstO1CG/hMkW5SpxIjDBU+Rqn7SdQ8S4bSZmxFMhMXrIT/5PerihVFSMBVUYAHQVm6jp8Wo2hglbaQQyOOqMOjCgF9WBqeo/ZkijhTzLqY4jU9APVj6CvG3luFu3sLqTzZUXfHLjHmJ3yPUdKgdGJlvdWndifMugAfYKAKA3X0GW8c3Gr3z3D9fLztiX2AHH7Ct+0sbWxjKWlukIPXaOT7nqapqUApSlAKUpQClKUAqLudBgnvPtEcs0Ld2jjba59z1/etm/urewtJLq6lEcMY3MxrlP8AiHqZvLkWEL5gt/mk9GkI6fYf3oC9k0W3MfkQSSW8Hqke3J9yRzWFH2asFxuuLpvcs37VzWlAW+naFpumPvtrUCT/ADud8n7nNWbwxSoyuiupGCrDINVulAb2q6XaavZtaXiF4y24bThkPqD3rMtLZLO0itY2ZliXarOcsR65NZqUApSlAKUpQH//2Q==" alt="ZTM">
+    </div>
+    <div>
+      <div class="logo-text">ZTM</div>
+      <div class="logo-sub">منظومة الشحن</div>
+    </div>
+  </div>
+
+  <a class="nav-item active"  href="norus-dashboard.html">📊 لوحة التحكم</a>
+  <a class="nav-item "  href="add-order.html">➕ إضافة طلب جديد</a>
+
+  <div class="nav-lbl">تتبع الطلبات</div>
+  <a class="nav-item " href="tracking.html?status=sent_from_store">📤 مرسلة من المتجر <span class="nav-badge" id="nb-sent">0</span></a>
+  <a class="nav-item " href="tracking.html?status=saved">📦 محفوظة</a>
+  <a class="nav-item " href="tracking.html?status=in_company">🏢 في الشركة</a>
+  <a class="nav-item " href="tracking.html?status=with_agent">🚚 مع المندوب <span class="nav-badge" style="background:#f5a623" id="nb-agent">0</span></a>
+  <a class="nav-item " href="tracking.html?status=delivered">✅ تم التسليم</a>
+
+  <div class="nav-lbl">الفروع</div>
+  <a class="nav-item " href="tracking.html?status=to_branch">🛣️ بالطريق إلى الفرع</a>
+  <a class="nav-item " href="tracking.html?status=arrived_branch">🏪 وصلت إلى الفرع</a>
+
+  <div class="nav-lbl">المرتجعات</div>
+  <a class="nav-item " href="tracking.html?status=return_agent">↩️ راجع لدى المندوب</a>
+  <a class="nav-item " href="tracking.html?status=return_warehouse">🗃️ مخزن المرتجعات <span class="nav-badge" style="background:#a78bfa" id="nb-warehouse">0</span></a>
+  <a class="nav-item " href="tracking.html?status=return_arrived_branch">↩️ مرتجع وصل للفرع</a>
+  <a class="nav-item " href="tracking.html?status=return_to_company">🚛 مرتجع بالطريق للشركة</a>
+  <a class="nav-item " href="tracking.html?status=return_in_company">🏢 راجع في الشركة</a>
+  <a class="nav-item " href="tracking.html?status=return_received">♻️ مرتجعات مستلمة</a>
+
+  <div class="nav-lbl">استثنائية</div>
+  <a class="nav-item " href="tracking.html?status=postponed">⏸ مؤجلة مع المندوب</a>
+  <a class="nav-item " href="tracking.html?status=resent">🔁 معاد إرسالها</a>
+  <a class="nav-item " href="tracking.html?status=null_order">❌ طلب معدوم</a>
+
+  <div class="nav-lbl">الأدوات</div>
+  <a class="nav-item "    href="tasks.html">📋 المهمات <span class="nav-badge" id="nb-tasks">0</span></a>
+  <a class="nav-item " href="stickers.html">🏷️ الملصقات <span class="nav-badge" style="background:#f5a623" id="nb-stickers">0</span></a>
+
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.07);margin-top:auto;flex-shrink:0;">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;" id="session-user">مرحباً</div>
+    <button onclick="logout()" style="width:100%;padding:8px;background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.2);border-radius:8px;color:#ff5c5c;font-family:Cairo,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(255,92,92,.2)'" onmouseout="this.style.background='rgba(255,92,92,.1)'">
+      🚪 تسجيل الخروج
+    </button>
+  </div>
+</aside>
+<script>
+function logout() {
+  localStorage.removeItem("ztm_session");
+  sessionStorage.removeItem("ztm_session");
+  window.location.href = "login.html";
+}
+// عرض اسم المستخدم
+try {
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (s) {
+    const session = JSON.parse(s);
+    const el = document.getElementById("session-user");
+    if (el) el.textContent = "مرحباً، " + (session.username || "مستخدم");
+  }
+} catch(e){}
+</script>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="page-title">لوحة تحكم ZTM</div>
+      <div class="page-sub">الأحد، 26 مارس 2026 — آخر تحديث: منذ دقيقتين</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📥 تصدير التقرير</button>
+      <button class="btn btn-primary">➕ إضافة طلب</button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card green">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:var(--green-bg); font-size:20px;">✅</div>
+        <div class="kpi-trend up">▲ 4.2%</div>
+      </div>
+      <div class="kpi-value" style="color:var(--green)">78.4%</div>
+      <div class="kpi-label">نسبة التسليم</div>
+    </div>
+
+    <div class="kpi-card red">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:var(--red-bg); font-size:20px;">↩️</div>
+        <div class="kpi-trend down">▼ 1.1%</div>
+      </div>
+      <div class="kpi-value" style="color:var(--red)">12.6%</div>
+      <div class="kpi-label">نسبة المرتجعات</div>
+    </div>
+
+    <div class="kpi-card accent">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:rgba(61,127,255,.15); font-size:20px;">📦</div>
+        <div class="kpi-trend up">▲ 18</div>
+      </div>
+      <div class="kpi-value" style="color:var(--accent2)">247</div>
+      <div class="kpi-label">إجمالي الطلبات هذا الشهر</div>
+    </div>
+
+    <div class="kpi-card amber">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:var(--amber-bg); font-size:20px;">💰</div>
+        <div class="kpi-trend up">▲ 320 ر.س</div>
+      </div>
+      <div class="kpi-value" style="color:var(--amber)">4,820</div>
+      <div class="kpi-label">الرصيد المتاح (ر.س)</div>
+    </div>
+  </div>
+
+  <!-- Mid Row -->
+  <div class="mid-grid">
+
+    <!-- Donut: توزيع الحالات -->
+    <div class="widget">
+      <div class="widget-title">توزيع الحالات <span>تفاصيل ←</span></div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="110" height="110" viewBox="0 0 110 110">
+          <!-- background circle -->
+          <circle cx="55" cy="55" r="42" fill="none" stroke="#1a2235" stroke-width="14"/>
+          <!-- delivered: 78.4% = 263.7deg -->
+          <circle cx="55" cy="55" r="42" fill="none" stroke="#22c97a" stroke-width="14"
+            stroke-dasharray="263.7 100" stroke-dashoffset="0"
+            transform="rotate(-90 55 55)" stroke-linecap="butt"
+            style="stroke-dasharray: calc(78.4 * 2.639) calc(100 * 2.639)"/>
+          <!-- returns: 12.6% -->
+          <circle cx="55" cy="55" r="42" fill="none" stroke="#ff5c5c" stroke-width="14"
+            stroke-dasharray="33.25 230" stroke-dashoffset="-207"
+            transform="rotate(-90 55 55)" stroke-linecap="butt"/>
+          <!-- in transit: 9% -->
+          <circle cx="55" cy="55" r="42" fill="none" stroke="#3d7fff" stroke-width="14"
+            stroke-dasharray="23.75 240" stroke-dashoffset="-240.25"
+            transform="rotate(-90 55 55)" stroke-linecap="butt"/>
+          <text x="55" y="51" text-anchor="middle" fill="#e8edf5" font-size="14" font-weight="800" font-family="Tajawal">78.4%</text>
+          <text x="55" y="63" text-anchor="middle" fill="#7a8aa0" font-size="9" font-family="Cairo">تسليم</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-row">
+            <div class="legend-label"><div class="legend-dot" style="background:var(--green)"></div>تم التسليم</div>
+            <div class="legend-val" style="color:var(--green)">193</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-label"><div class="legend-dot" style="background:var(--red)"></div>مرتجعات</div>
+            <div class="legend-val" style="color:var(--red)">31</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-label"><div class="legend-dot" style="background:var(--accent)"></div>قيد التوصيل</div>
+            <div class="legend-val" style="color:var(--accent2)">23</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar Chart: أداء المسارات -->
+    <div class="widget">
+      <div class="widget-title">أداء التسليم حسب المسار <span>هذا الشهر</span></div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">مسار المدينة</div>
+          <div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--green)"></div></div>
+          <div class="bar-val" style="color:var(--green)">85%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">مسار الفروع</div>
+          <div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--accent)"></div></div>
+          <div class="bar-val" style="color:var(--accent2)">72%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">مرتجع داخلي</div>
+          <div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--amber)"></div></div>
+          <div class="bar-val" style="color:var(--amber)">45%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">مرتجع فروع</div>
+          <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--red)"></div></div>
+          <div class="bar-val" style="color:var(--red)">28%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">معاد إرسالها</div>
+          <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--purple)"></div></div>
+          <div class="bar-val" style="color:var(--purple)">60%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Balance Widget -->
+    <div class="widget">
+      <div class="widget-title">الرصيد المالي</div>
+      <div style="font-size:12px;color:var(--muted)">الرصيد الحالي</div>
+      <div class="balance-big" style="color:var(--green)">4,820.00 <span style="font-size:16px">ر.س</span></div>
+      <div class="balance-sub">آخر تحديث: اليوم 10:42 ص</div>
+      <div class="balance-actions">
+        <button class="balance-btn primary">طلب سحب</button>
+        <button class="balance-btn ghost">كشف الحساب</button>
+      </div>
+      <div class="divider-line"></div>
+      <div class="pending-row">
+        <span class="pending-label">مبالغ قيد التحصيل</span>
+        <span class="pending-val">1,240.00 ر.س</span>
+      </div>
+      <div class="pending-row">
+        <span class="pending-label">مبالغ معلقة</span>
+        <span style="font-size:12px;font-weight:600;color:var(--muted)">320.00 ر.س</span>
+      </div>
+      <div class="pending-row">
+        <span class="pending-label">آخر سحب</span>
+        <span style="font-size:12px;color:var(--muted)">22 مارس</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="table-widget">
+    <div class="table-header-row">
+      <div class="table-title">آخر الطلبات</div>
+      <div style="display:flex;gap:8px;">
+        <div class="search-box" id="dashSearchBox" onclick="this.querySelector('input').focus()" style="cursor:text;">
+          🔍 &nbsp;<input id="dashSearch" placeholder="بحث برقم التتبع..." style="background:none;border:none;outline:none;color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;width:180px;" onkeydown="if(event.key==='Enter')quickSearch(this.value)">
+        </div>
+        <button class="btn btn-ghost" style="padding:7px 14px;font-size:12px;" onclick="quickSearch(document.getElementById('dashSearch').value)">بحث</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>رقم التتبع</th>
+          <th>المستلم</th>
+          <th>المسار</th>
+          <th>الحالة</th>
+          <th>المبلغ</th>
+          <th>التاريخ</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tracking-num">NRS-2026-4821</span></td>
+          <td>أحمد العمري</td>
+          <td><span class="route-tag">مدينة</span></td>
+          <td><span class="status-pill pill-green">✅ تم التسليم</span></td>
+          <td>250 ر.س</td>
+          <td style="color:var(--muted);font-size:12px">اليوم، 09:14</td>
+          <td><button class="action-btn">تفاصيل</button></td>
+        </tr>
+        <tr>
+          <td><span class="tracking-num">NRS-2026-4820</span></td>
+          <td>سارة المطيري</td>
+          <td><span class="route-tag">فروع</span></td>
+          <td><span class="status-pill pill-teal">🚚 مع المندوب</span></td>
+          <td>180 ر.س</td>
+          <td style="color:var(--muted);font-size:12px">اليوم، 08:52</td>
+          <td><button class="action-btn">تفاصيل</button></td>
+        </tr>
+        <tr>
+          <td><span class="tracking-num">NRS-2026-4819</span></td>
+          <td>محمد الشهري</td>
+          <td><span class="route-tag">مدينة</span></td>
+          <td><span class="status-pill pill-amber">⏸ مؤجلة</span></td>
+          <td>430 ر.س</td>
+          <td style="color:var(--muted);font-size:12px">أمس، 16:30</td>
+          <td><button class="action-btn">تفاصيل</button></td>
+        </tr>
+        <tr>
+          <td><span class="tracking-num">NRS-2026-4818</span></td>
+          <td>نورة القحطاني</td>
+          <td><span class="route-tag">فروع</span></td>
+          <td><span class="status-pill pill-red">↩️ راجع لدى المندوب</span></td>
+          <td>90 ر.س</td>
+          <td style="color:var(--muted);font-size:12px">أمس، 14:10</td>
+          <td><button class="action-btn">تفاصيل</button></td>
+        </tr>
+        <tr>
+          <td><span class="tracking-num">NRS-2026-4817</span></td>
+          <td>فيصل الدوسري</td>
+          <td><span class="route-tag">مدينة</span></td>
+          <td><span class="status-pill pill-purple">🔁 معاد إرسالها</span></td>
+          <td>320 ر.س</td>
+          <td style="color:var(--muted);font-size:12px">25 مارس</td>
+          <td><button class="action-btn">تفاصيل</button></td>
+        </tr>
+        <tr>
+          <td><span class="tracking-num">NRS-2026-4816</span></td>
+          <td>ريم السبيعي</td>
+          <td><span class="route-tag">فروع</span></td>
+          <td><span class="status-pill pill-blue">🏢 في الشركة</span></td>
+          <td>150 ر.س</td>
+          <td style="color:var(--muted);font-size:12px">25 مارس</td>
+          <td><button class="action-btn">تفاصيل</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="bottom-grid">
+
+    <!-- Activity -->
+    <div class="widget">
+      <div class="widget-title">آخر النشاطات <span>عرض الكل ←</span></div>
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="activity-text">تم تسليم الطرد <span class="activity-num">NRS-4821</span> بنجاح للعميل أحمد العمري</div>
+          <div class="activity-time">منذ 18 دقيقة</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--amber)"></div>
+        <div>
+          <div class="activity-text">تم تأجيل الطرد <span class="activity-num">NRS-4819</span> — العميل غير متاح</div>
+          <div class="activity-time">منذ 45 دقيقة</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--purple)"></div>
+        <div>
+          <div class="activity-text">تم إعادة إرسال الطرد <span class="activity-num">NRS-4817</span> من مخزن المرتجعات</div>
+          <div class="activity-time">منذ ساعتين</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--red)"></div>
+        <div>
+          <div class="activity-text">الطرد <span class="activity-num">NRS-4818</span> راجع لدى المندوب — لم يتم الاستلام</div>
+          <div class="activity-time">منذ 3 ساعات</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--teal)"></div>
+        <div>
+          <div class="activity-text">تم سحب ستيكر جديد للطرد <span class="activity-num">NRS-4822</span></div>
+          <div class="activity-time">منذ 4 ساعات</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="widget">
+      <div class="widget-title">المهمات المعلقة <span>إدارة المهمات ←</span></div>
+
+      <div class="task-item">
+        <div class="task-icon" style="background:var(--green-bg)">💸</div>
+        <div class="task-info">
+          <div class="task-title">طلب سحب مالي</div>
+          <div class="task-sub">المبلغ: 2,000 ر.س — منذ يومين</div>
+        </div>
+        <span class="task-status" style="background:var(--amber-bg);color:var(--amber)">قيد المراجعة</span>
+      </div>
+
+      <div class="task-item">
+        <div class="task-icon" style="background:var(--red-bg)">↩️</div>
+        <div class="task-info">
+          <div class="task-title">طلب استرجاع طرد</div>
+          <div class="task-sub">NRS-4815 — مخزن المرتجعات</div>
+        </div>
+        <span class="task-status" style="background:var(--purple-bg);color:var(--purple)">جديد</span>
+      </div>
+
+      <div class="task-item">
+        <div class="task-icon" style="background:var(--amber-bg)">🔁</div>
+        <div class="task-info">
+          <div class="task-title">إعادة إرسال طرد</div>
+          <div class="task-sub">NRS-4810 — بيانات جديدة مطلوبة</div>
+        </div>
+        <span class="task-status" style="background:var(--amber-bg);color:var(--amber)">بانتظارك</span>
+      </div>
+    </div>
+
+  </div><!-- end bottom-grid -->
+
+</main>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- ZTM DASHBOARD — API LIVE DATA                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<script>
+const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+const CLIENT_CODE = "3729";
+const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+
+// ── خريطة الحالات ──────────────────────────────────────
+const STATUS_MAP = {
+  "مرسلة من المتجر":       { slug:"sent_from_store",  emoji:"📤", color:"var(--muted)"   },
+  "محفوظة":                 { slug:"saved",            emoji:"📦", color:"var(--teal)"    },
+  "في الشركة":              { slug:"in_company",       emoji:"🏢", color:"var(--teal)"    },
+  "بالطريق إلى الفرع":     { slug:"to_branch",        emoji:"🛣️", color:"var(--purple)"  },
+  "وصلت إلى الفرع":        { slug:"arrived_branch",   emoji:"🏪", color:"var(--purple)"  },
+  "مع المندوب":             { slug:"with_agent",       emoji:"🚚", color:"var(--teal)"    },
+  "تم التسليم":             { slug:"delivered",        emoji:"✅", color:"var(--green)"   },
+  "راجع لدى المندوب":      { slug:"return_agent",     emoji:"↩️", color:"var(--red)"     },
+  "مخزن المرتجعات":        { slug:"return_warehouse", emoji:"🗃️", color:"var(--red)"     },
+  "مرتجع وصل للفرع":       { slug:"return_arrived",   emoji:"↩️", color:"var(--red)"     },
+  "مرتجع بالطريق للشركة":  { slug:"return_company",   emoji:"🚛", color:"var(--red)"     },
+  "راجع في الشركة":         { slug:"return_in",        emoji:"🏢", color:"var(--red)"     },
+  "مرتجعات تم استلامها":   { slug:"return_received",  emoji:"♻️", color:"var(--muted)"   },
+  "مؤجلة مع المندوب":      { slug:"postponed",        emoji:"⏸",  color:"var(--amber)"   },
+  "معاد إرسالها":           { slug:"resent",           emoji:"🔁", color:"var(--purple)"  },
+  "طلب معدوم":              { slug:"null_order",       emoji:"❌", color:"var(--red)"     },
+};
+
+// ── HTTP Helper ─────────────────────────────────────────
+async function apiPost(endpoint, body = {}) {
+  const params = new URLSearchParams({
+    authentication_key: AUTH_KEY,
+    main_client_code:   CLIENT_CODE,
+    ...body,
+  });
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Accept":       "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+  return res.json();
+}
+
+// ── تحديث عنصر بـ animation ─────────────────────────────
+function animateValue(el, newVal) {
+  if (!el) return;
+  el.style.transition = "opacity .3s";
+  el.style.opacity = "0";
+  setTimeout(() => {
+    el.textContent = newVal;
+    el.style.opacity = "1";
+  }, 300);
+}
+
+// ── تحديث وقت آخر تحديث ───────────────────────────────
+function updateLastSync() {
+  const el = document.querySelector(".page-sub");
+  if (el) {
+    const now = new Date();
+    el.textContent = `الأحد، ${now.toLocaleDateString("ar-LY",{year:"numeric",month:"long",day:"numeric"})} — آخر تحديث: ${now.toLocaleTimeString("ar-LY",{hour:"2-digit",minute:"2-digit"})}`;
+  }
+}
+
+// ── جلب بيانات مهمة من API ─────────────────────────────
+// الـ API لا يوفر endpoint للإحصائيات مباشرة
+// لذا نستخدم mission-orders للحصول على آخر الطلبات
+async function fetchDashboardData() {
+  showApiStatus("loading");
+  try {
+    // جلب آخر الطلبات عبر mission-orders أو search
+    // نجرب عدة أكواد متتالية لجلب آخر الطلبات
+    const results = [];
+
+    // محاولة جلب آخر 10 طلبات بالبحث عن أكواد حديثة
+    const searches = await Promise.allSettled([
+      apiPost("/search-order", { search_Key: "" }),
+    ]);
+
+    // معالجة النتائج
+    searches.forEach(r => {
+      if (r.status === "fulfilled" && r.value?.success === 1) {
+        const res = r.value.result;
+        if (res) results.push(res);
+      }
+    });
+
+    // تحديث الجدول بالبيانات الحقيقية إن وجدت
+    if (results.length > 0) {
+      renderLiveOrders(results);
+    }
+
+    // حساب الإحصائيات من البيانات المتاحة
+    computeStats(results);
+    updateLastSync();
+    showApiStatus("success");
+
+  } catch(e) {
+    console.warn("[Dashboard] API error:", e.message);
+    showApiStatus("error");
+  }
+}
+
+// ── عرض آخر الطلبات الحقيقية ──────────────────────────
+function renderLiveOrders(orders) {
+  const tbody = document.querySelector("table tbody");
+  if (!tbody || orders.length === 0) return;
+
+  tbody.innerHTML = orders.map(o => {
+    const statusRaw = o.status || "—";
+    const meta      = STATUS_MAP[statusRaw] || { emoji:"❓", color:"var(--muted)", slug:"unknown" };
+    const isReturn  = statusRaw.includes("راجع") || statusRaw.includes("مرتجع");
+    const isBranch  = statusRaw.includes("فرع");
+    const routeTag  = isBranch
+      ? `<span class="route-tag" style="color:#a78bfa;border-color:#a78bfa44">فروع</span>`
+      : `<span class="route-tag">مدينة</span>`;
+    const amount = o.received_amount ? Number(o.received_amount).toLocaleString() + " د.ل" : "—";
+
+    return `<tr>
+      <td><span class="tracking-num" onclick="window.open('tracking.html?search=${o.code||o.bar_code}','_self')" style="cursor:pointer">${o.code || o.bar_code || "—"}</span></td>
+      <td>${o.captain || "—"}</td>
+      <td>${routeTag}</td>
+      <td><span class="status-pill" style="background:${meta.color}22;color:${meta.color};border:none;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;">${meta.emoji} ${statusRaw}</span></td>
+      <td style="font-family:'Tajawal',sans-serif;font-weight:700;color:var(--green)">${amount}</td>
+      <td style="font-size:11px;color:var(--muted)">—</td>
+      <td><button class="action-btn" onclick="searchOrder('${o.code||o.bar_code}')">تفاصيل</button></td>
+    </tr>`;
+  }).join("");
+}
+
+// ── حساب إحصائيات من البيانات ─────────────────────────
+function computeStats(orders) {
+  const delivered = orders.filter(o => o.status === "تم التسليم").length;
+  const returned  = orders.filter(o => (o.status||"").includes("راجع") || (o.status||"").includes("مرتجع")).length;
+  const total     = orders.length;
+
+  const deliveryRate = total > 0 ? Math.round((delivered/total)*100) : null;
+  const returnRate   = total > 0 ? Math.round((returned/total)*100)  : null;
+
+  // تحديث KPI cards إذا وجدت بيانات حقيقية
+  if (deliveryRate !== null) {
+    const delivEl = document.querySelector(".kpi-card.green .kpi-value");
+    if (delivEl) animateValue(delivEl, deliveryRate + "%");
+  }
+  if (returnRate !== null) {
+    const retEl = document.querySelector(".kpi-card.red .kpi-value");
+    if (retEl) animateValue(retEl, returnRate + "%");
+  }
+  if (total > 0) {
+    const totEl = document.querySelector(".kpi-card.accent .kpi-value");
+    if (totEl) animateValue(totEl, total);
+  }
+}
+
+// ── بحث سريع من الجدول ────────────────────────────────
+async function quickSearch(code) {
+  code = (code||"").trim();
+  if (!code) { fetchDashboardData(); return; }
+  showApiStatus("loading");
+  try {
+    const data = await apiPost("/search-order", { search_Key: code });
+    if (data.success === 1) {
+      renderLiveOrders([data.result]);
+      showApiStatus("success");
+    } else {
+      showApiStatus("error");
+      alert(data.error_msg || "لم يُعثر على الطلب");
+    }
+  } catch(e) { showApiStatus("error"); }
+}
+
+// ── بحث عن طلب محدد ───────────────────────────────────
+async function searchOrder(code) {
+  if (!code) return;
+  try {
+    const data = await apiPost("/search-order", { search_Key: code });
+    if (data.success === 1) {
+      const r   = data.result;
+      const msg = `الطلب: ${r.code}\nالحالة: ${r.status}\nالفرع: ${r.branch||"—"}\nالمبلغ المستلم: ${r.received_amount||"—"}`;
+      alert(msg);
+    } else {
+      alert("لم يُعثر على الطلب: " + (data.error_msg||""));
+    }
+  } catch(e) {
+    alert("خطأ في الاتصال بالـ API");
+  }
+}
+
+// ── مؤشر حالة الـ API ─────────────────────────────────
+function showApiStatus(state) {
+  let indicator = document.getElementById("apiStatusIndicator");
+  if (!indicator) {
+    indicator = document.createElement("div");
+    indicator.id = "apiStatusIndicator";
+    indicator.style.cssText = `
+      position:fixed; bottom:20px; left:20px;
+      padding:8px 14px; border-radius:8px; font-size:12px;
+      font-family:'Cairo',sans-serif; font-weight:600;
+      z-index:999; display:flex; align-items:center; gap:8px;
+      transition:all .3s; border:1px solid transparent;
+    `;
+    document.body.appendChild(indicator);
+  }
+
+  const states = {
+    loading: { bg:"rgba(61,127,255,.15)", border:"rgba(61,127,255,.4)", color:"#3d7fff", text:"⟳ جارٍ تحديث البيانات..." },
+    success: { bg:"rgba(34,201,122,.15)", border:"rgba(34,201,122,.4)", color:"#22c97a", text:"✅ بيانات محدّثة من API النورس" },
+    error:   { bg:"rgba(255,92,92,.15)",  border:"rgba(255,92,92,.4)",  color:"#ff5c5c", text:"⚠️ تعذّر الاتصال — عرض بيانات تجريبية" },
+  };
+  const s = states[state];
+  indicator.style.background   = s.bg;
+  indicator.style.borderColor  = s.border;
+  indicator.style.color        = s.color;
+  indicator.textContent        = s.text;
+  indicator.style.opacity      = "1";
+
+  if (state !== "loading") {
+    setTimeout(() => { indicator.style.opacity = "0"; }, 4000);
+  }
+}
+
+// ── زر التحديث اليدوي ─────────────────────────────────
+document.querySelector(".btn-ghost")?.addEventListener("click", function() {
+  if (this.textContent.includes("تصدير")) return;
+  fetchDashboardData();
+});
+
+// ── تحديث تلقائي كل 5 دقائق ──────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  fetchDashboardData();
+  setInterval(fetchDashboardData, 5 * 60 * 1000);
+});
+</script>
+
+<!-- ZTM Nav Counters -->
+<script>
+(function(){
+  const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+  const CLIENT_CODE = "3729";
+  const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+
+  // تحديث العدادات من localStorage (مشترك بين الصفحات)
+  function loadCounters() {
+    try {
+      const c = JSON.parse(localStorage.getItem("ztm_counters") || "{}");
+      if (document.getElementById("nb-sent"))      document.getElementById("nb-sent").textContent      = c.sent      || 0;
+      if (document.getElementById("nb-agent"))     document.getElementById("nb-agent").textContent     = c.agent     || 0;
+      if (document.getElementById("nb-warehouse")) document.getElementById("nb-warehouse").textContent = c.warehouse || 0;
+      if (document.getElementById("nb-tasks"))     document.getElementById("nb-tasks").textContent     = c.tasks     || 0;
+      if (document.getElementById("nb-stickers"))  document.getElementById("nb-stickers").textContent  = c.stickers  || 0;
+      // إخفاء الصفري
+      ["nb-sent","nb-agent","nb-warehouse","nb-tasks","nb-stickers"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.textContent === "0") el.style.display = "none";
+        else if (el) el.style.display = "inline-block";
+      });
+    } catch(e){}
+  }
+
+  // فتح الصفحة الصحيحة مع الحالة المطلوبة
+  document.querySelectorAll(".sidebar a[href^='tracking.html']").forEach(a => {
+    a.addEventListener("click", function(e) {
+      const url    = new URL(this.href, window.location.href);
+      const status = url.searchParams.get("status");
+      if (status && window.switchTab) {
+        e.preventDefault();
+        if (window.location.pathname.endsWith("tracking.html")) {
+          window.switchTab(status);
+        } else {
+          window.location.href = "tracking.html?status=" + status;
+        }
+      }
+    });
+  });
+
+  // تطبيق الحالة من URL عند فتح tracking.html
+  if (window.location.pathname.endsWith("tracking.html")) {
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");
+      if (status && window.switchTab) {
+        setTimeout(() => window.switchTab(status), 100);
+      }
+    });
+  }
+
+  loadCounters();
+  // تحديث كل 60 ثانية
+  setInterval(loadCounters, 60000);
+})();
+</script>
+
+</body>
+</html>

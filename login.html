@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTM — تسجيل الدخول</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0b0f1a;
+  --bg2:     #111827;
+  --bg3:     #1a2235;
+  --card:    #141c2e;
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text:    #e8edf5;
+  --muted:   #7a8aa0;
+  --accent:  #e63030;
+  --accent2: #ff4f4f;
+  --green:   #22c97a;
+  --red:     #ff5c5c;
+  --r:       12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Cairo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* ── Background Pattern ── */
+.bg-pattern {
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(230,48,48,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(61,127,255,.05) 0%, transparent 60%);
+}
+.bg-grid {
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Login Container ── */
+.login-wrap {
+  position:relative; z-index:1;
+  width:100%; max-width:420px;
+  padding:24px;
+  animation:fadeUp .5s ease both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+/* Logo */
+.logo-section {
+  text-align:center; margin-bottom:32px;
+}
+.logo-badge {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:16px; padding:12px 20px;
+  margin-bottom:16px;
+}
+.logo-img-wrap {
+  background:#fff; border-radius:8px;
+  padding:4px 8px; height:38px;
+  display:flex; align-items:center;
+}
+.logo-img-wrap img { height:28px; width:auto; }
+.logo-brand { text-align:right; }
+.logo-name { font-size:18px; font-weight:800; letter-spacing:.5px; }
+.logo-sub  { font-size:11px; color:var(--muted); margin-top:1px; }
+.login-title { font-size:22px; font-weight:700; margin-bottom:6px; }
+.login-sub   { font-size:13px; color:var(--muted); }
+
+/* Card */
+.login-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px;
+  position:relative;
+  overflow:hidden;
+}
+.login-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--accent), #ff8c00, var(--accent));
+  background-size:200% 100%;
+  animation:shimmer 3s linear infinite;
+}
+@keyframes shimmer { to { background-position:-200% 0; } }
+
+/* Fields */
+.field { margin-bottom:18px; }
+.field-label {
+  font-size:12px; font-weight:600; color:var(--muted);
+  margin-bottom:7px; display:flex; align-items:center; gap:5px;
+}
+.input-wrap { position:relative; }
+.input-icon {
+  position:absolute; right:12px; top:50%;
+  transform:translateY(-50%); font-size:15px;
+  color:var(--muted); pointer-events:none;
+}
+.field-input {
+  width:100%; background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:var(--r); color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:13px;
+  padding:11px 38px 11px 40px;
+  outline:none; transition:all .2s;
+}
+.field-input:focus {
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(230,48,48,.12);
+  background:var(--bg2);
+}
+.field-input::placeholder { color:var(--muted); opacity:.6; }
+.field-input.error { border-color:var(--red); box-shadow:0 0 0 3px rgba(255,92,92,.1); }
+
+/* Toggle password */
+.toggle-pass {
+  position:absolute; left:12px; top:50%;
+  transform:translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  color:var(--muted); font-size:14px; padding:2px;
+  transition:color .15s;
+}
+.toggle-pass:hover { color:var(--text); }
+
+/* Remember row */
+.remember-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px; font-size:12px;
+}
+.remember-label {
+  display:flex; align-items:center; gap:7px;
+  cursor:pointer; color:var(--muted);
+}
+.custom-cb {
+  width:16px; height:16px; border-radius:4px;
+  border:1.5px solid var(--border2); background:var(--bg3);
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s; flex-shrink:0;
+}
+.custom-cb.checked { background:var(--accent); border-color:var(--accent); }
+.custom-cb.checked::after { content:'✓'; color:#fff; font-size:10px; font-weight:700; }
+.forgot-link {
+  color:var(--accent2); text-decoration:none; font-weight:500;
+  transition:opacity .15s;
+}
+.forgot-link:hover { opacity:.75; }
+
+/* Submit Button */
+.submit-btn {
+  width:100%; padding:13px;
+  background:var(--accent); color:#fff;
+  border:none; border-radius:var(--r);
+  font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  position:relative; overflow:hidden;
+}
+.submit-btn:hover  { background:var(--accent2); transform:translateY(-1px); box-shadow:0 4px 20px rgba(230,48,48,.3); }
+.submit-btn:active { transform:translateY(0); }
+.submit-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; box-shadow:none; }
+.submit-btn::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.1) 0%, transparent 50%);
+}
+
+/* Spinner */
+.spinner {
+  width:16px; height:16px;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite; display:none;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Error Alert */
+.error-alert {
+  background:rgba(255,92,92,.1); border:1px solid rgba(255,92,92,.3);
+  border-radius:var(--r); padding:10px 14px;
+  font-size:12px; color:var(--red);
+  margin-bottom:16px; display:none;
+  align-items:center; gap:8px;
+  animation:shake .3s ease;
+}
+.error-alert.show { display:flex; }
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  20%,60%  { transform:translateX(-4px); }
+  40%,80%  { transform:translateX(4px); }
+}
+
+/* Divider */
+.divider {
+  display:flex; align-items:center; gap:12px;
+  margin:20px 0; font-size:11px; color:var(--muted);
+}
+.divider::before, .divider::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+
+/* API Key Mode */
+.api-mode-btn {
+  width:100%; padding:11px;
+  background:var(--bg3); color:var(--muted);
+  border:1px solid var(--border2); border-radius:var(--r);
+  font-family:'Cairo',sans-serif; font-size:13px; font-weight:600;
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.api-mode-btn:hover { border-color:var(--accent); color:var(--accent2); background:rgba(230,48,48,.06); }
+
+/* Footer */
+.login-footer {
+  text-align:center; margin-top:24px;
+  font-size:11px; color:var(--muted);
+  line-height:1.7;
+}
+.login-footer a { color:var(--accent2); text-decoration:none; }
+
+/* Tabs */
+.login-tabs {
+  display:flex; gap:0; margin-bottom:22px;
+  background:var(--bg3); border-radius:var(--r);
+  padding:3px;
+}
+.login-tab {
+  flex:1; padding:8px; border-radius:9px;
+  font-size:12px; font-weight:600; text-align:center;
+  cursor:pointer; color:var(--muted);
+  transition:all .2s; border:none; background:none;
+  font-family:'Cairo',sans-serif;
+}
+.login-tab.active {
+  background:var(--card); color:var(--text);
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+
+/* API Key field */
+.api-key-hint {
+  background:var(--bg3); border-radius:var(--r);
+  padding:10px 12px; font-size:11px; color:var(--muted);
+  margin-bottom:16px; line-height:1.6;
+  border:1px solid var(--border);
+}
+.api-key-hint strong { color:var(--text); }
+
+/* Success state */
+.success-state {
+  text-align:center; padding:20px 0; display:none;
+}
+.success-icon {
+  font-size:48px; margin-bottom:12px;
+  animation:pop .4s cubic-bezier(.4,0,.2,1);
+}
+@keyframes pop { 0%{transform:scale(.5);opacity:0} 80%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+.success-msg { font-size:16px; font-weight:700; color:var(--green); margin-bottom:6px; }
+.success-sub { font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div class="bg-grid"></div>
+
+<div class="login-wrap">
+
+  <!-- Logo -->
+  <div class="logo-section">
+    <div class="logo-badge">
+      <div class="logo-img-wrap">
+        <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAyAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAgMEAQf/xAAwEAACAQMDAgMGBwAAAAAAAAABAgMABBEFEiExBhNBURQiMmFxgZGhBxUjQlL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+qaUpQClKUApSlAKi9R1i10xF8z5pZDiKCMZeQ+wH9TwKqdb1+6e6bTdHiSe9UZlkc/JbJ7se59h9ya5ttBt7d/tWqXsl/fN8xuG4jT2UcD9eT70BbprtzdRaeLWCS4lJBdIFLFAfXA6VLaJrjapeXFnLbmCeBVYrlXUg9ipq50bRrLRbVoLJCN5zJI7bmkbuWPc1SdnbOW51G0ub5D9pJI0cIG5FyeA3fNAblKUoBSlKAUpSgFKUoBSlKAUp0oABkgDrWc9xBbrl5o09Mk4rA1fUW0yy81ImlkJCRqvdj0H17ms9H05bRTcXG2a8k+aWT3PoPoKAstO1CG/hMkW5SpxIjDBU+Rqn7SdQ8S4bSZmxFMhMXrIT/5PerihVFSMBVUYAHQVm6jp8Wo2hglbaQQyOOqMOjCgF9WBqeo/ZkijhTzLqY4jU9APVj6CvG3luFu3sLqTzZUXfHLjHmJ3yPUdKgdGJlvdWndifMugAfYKAKA3X0GW8c3Gr3z3D9fLztiX2AHH7Ct+0sbWxjKWlukIPXaOT7nqapqUApSlAKUpQClKUAqLudBgnvPtEcs0Ld2jjba59z1/etm/urewtJLq6lEcMY3MxrlP8AiHqZvLkWEL5gt/mk9GkI6fYf3oC9k0W3MfkQSSW8Hqke3J9yRzWFH2asFxuuLpvcs37VzWlAW+naFpumPvtrUCT/ADud8n7nNWbwxSoyuiupGCrDINVulAb2q6XaavZtaXiF4y24bThkPqD3rMtLZLO0itY2ZliXarOcsR65NZqUApSlAKUpQH//2Q==" alt="ZTM">
+      </div>
+      <div class="logo-brand">
+        <div class="logo-name">ZTM</div>
+        <div class="logo-sub">منظومة الشحن</div>
+      </div>
+    </div>
+    <div class="login-title">مرحباً بك 👋</div>
+    <div class="login-sub">سجّل دخولك للوصول إلى لوحة التحكم</div>
+  </div>
+
+  <!-- Card -->
+  <div class="login-card">
+
+    <!-- Tabs -->
+    <div class="login-tabs">
+      <button class="login-tab active" id="tabCredentials" onclick="switchLoginTab('credentials')">
+        🔑 بيانات الدخول
+      </button>
+      <button class="login-tab" id="tabApiKey" onclick="switchLoginTab('apikey')">
+        🔌 مفتاح API
+      </button>
+    </div>
+
+    <!-- Error Alert -->
+    <div class="error-alert" id="errorAlert">
+      <span>⚠️</span>
+      <span id="errorMsg">بيانات الدخول غير صحيحة</span>
+    </div>
+
+    <!-- Success State -->
+    <div class="success-state" id="successState">
+      <div class="success-icon">✅</div>
+      <div class="success-msg">تم تسجيل الدخول بنجاح!</div>
+      <div class="success-sub">جارٍ توجيهك للوحة التحكم...</div>
+    </div>
+
+    <!-- Credentials Form -->
+    <div id="credentialsForm">
+      <div class="field">
+        <div class="field-label">📧 البريد الإلكتروني أو اسم المستخدم</div>
+        <div class="input-wrap">
+          <span class="input-icon">👤</span>
+          <input class="field-input" type="text" id="username"
+            placeholder="أدخل اسم المستخدم..."
+            onkeydown="if(event.key==='Enter')document.getElementById('password').focus()">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">🔒 كلمة المرور</div>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input class="field-input" type="password" id="password"
+            placeholder="أدخل كلمة المرور..."
+            onkeydown="if(event.key==='Enter')login()">
+          <button class="toggle-pass" onclick="togglePassword()" tabindex="-1" id="togglePassBtn">👁️</button>
+        </div>
+      </div>
+
+      <div class="remember-row">
+        <label class="remember-label" onclick="toggleRemember()">
+          <div class="custom-cb" id="rememberCb"></div>
+          تذكرني
+        </label>
+        <a href="#" class="forgot-link">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button class="submit-btn" id="loginBtn" onclick="login()">
+        <span id="loginBtnText">تسجيل الدخول</span>
+        <div class="spinner" id="loginSpinner"></div>
+        <span id="loginArrow">←</span>
+      </button>
+    </div>
+
+    <!-- API Key Form -->
+    <div id="apikeyForm" style="display:none;">
+      <div class="api-key-hint">
+        أدخل <strong>authentication_key</strong> و <strong>main_client_code</strong> من
+        بوابة النورس ← إعدادات الحساب ← ربط API
+      </div>
+
+      <div class="field">
+        <div class="field-label">🔑 Authentication Key</div>
+        <div class="input-wrap">
+          <span class="input-icon">🔑</span>
+          <input class="field-input" type="text" id="apiKeyInput"
+            placeholder="أدخل مفتاح الـ API..."
+            style="font-family:monospace;font-size:11px;padding-right:38px;">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">🏢 Main Client Code</div>
+        <div class="input-wrap">
+          <span class="input-icon">🏢</span>
+          <input class="field-input" type="text" id="clientCodeInput"
+            placeholder="أدخل كود العميل..."
+            style="font-family:monospace;"
+            onkeydown="if(event.key==='Enter')loginWithApiKey()">
+        </div>
+      </div>
+
+      <button class="submit-btn" id="apiLoginBtn" onclick="loginWithApiKey()">
+        <span id="apiLoginBtnText">دخول بمفتاح API</span>
+        <div class="spinner" id="apiLoginSpinner"></div>
+        <span>←</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="login-footer">
+    ZTM — منظومة الشحن المدعومة بـ
+    <a href="https://portal.nawris.algoriza.com" target="_blank">Al-Nuwras API</a>
+    <br>جميع البيانات محمية ومشفرة
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const BASE_URL = "https://backoffice.nawris.algoriza.com/external-api";
+
+// بيانات الدخول الافتراضية (تُغيَّر حسب الحاجة)
+// في الإنتاج: استبدل بـ backend authentication
+const DEFAULT_CREDENTIALS = {
+  username: "admin",
+  password: "ZTM@2026",
+  auth_key:    "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d",
+  client_code: "3729",
+};
+
+let rememberMe     = false;
+let passVisible    = false;
+let currentTab     = "credentials";
+
+// ══════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════
+function switchLoginTab(tab) {
+  currentTab = tab;
+  document.getElementById("tabCredentials").classList.toggle("active", tab === "credentials");
+  document.getElementById("tabApiKey").classList.toggle("active", tab === "apikey");
+  document.getElementById("credentialsForm").style.display = tab === "credentials" ? "block" : "none";
+  document.getElementById("apikeyForm").style.display      = tab === "apikey"      ? "block" : "none";
+  hideError();
+}
+
+// ══════════════════════════════════════════
+//  TOGGLE PASSWORD
+// ══════════════════════════════════════════
+function togglePassword() {
+  const inp = document.getElementById("password");
+  passVisible = !passVisible;
+  inp.type = passVisible ? "text" : "password";
+  document.getElementById("togglePassBtn").textContent = passVisible ? "🙈" : "👁️";
+}
+
+// ══════════════════════════════════════════
+//  REMEMBER ME
+// ══════════════════════════════════════════
+function toggleRemember() {
+  rememberMe = !rememberMe;
+  document.getElementById("rememberCb").classList.toggle("checked", rememberMe);
+}
+
+// ══════════════════════════════════════════
+//  ERROR / SUCCESS
+// ══════════════════════════════════════════
+function showError(msg) {
+  const el = document.getElementById("errorAlert");
+  document.getElementById("errorMsg").textContent = msg;
+  el.classList.add("show");
+  // رج الحقول
+  document.querySelectorAll(".field-input").forEach(i => {
+    i.classList.add("error");
+    setTimeout(() => i.classList.remove("error"), 2000);
+  });
+}
+
+function hideError() {
+  document.getElementById("errorAlert").classList.remove("show");
+}
+
+function showSuccess() {
+  document.getElementById("credentialsForm").style.display = "none";
+  document.getElementById("apikeyForm").style.display      = "none";
+  document.getElementById("successState").style.display    = "block";
+  setTimeout(() => {
+    window.location.href = "norus-dashboard.html";
+  }, 1500);
+}
+
+// ══════════════════════════════════════════
+//  LOGIN — بيانات الدخول
+// ══════════════════════════════════════════
+async function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  hideError();
+
+  if (!username) { showError("يرجى إدخال اسم المستخدم"); return; }
+  if (!password) { showError("يرجى إدخال كلمة المرور"); return; }
+
+  setLoading("login", true);
+
+  // محاكاة تأخير الشبكة
+  await delay(800);
+
+  // التحقق من بيانات الدخول
+  if (username === DEFAULT_CREDENTIALS.username && password === DEFAULT_CREDENTIALS.password) {
+    saveSession(DEFAULT_CREDENTIALS.auth_key, DEFAULT_CREDENTIALS.client_code, username);
+    setLoading("login", false);
+    showSuccess();
+  } else {
+    setLoading("login", false);
+    showError("اسم المستخدم أو كلمة المرور غير صحيحة");
+  }
+}
+
+// ══════════════════════════════════════════
+//  LOGIN — مفتاح API
+// ══════════════════════════════════════════
+async function loginWithApiKey() {
+  const authKey    = document.getElementById("apiKeyInput").value.trim();
+  const clientCode = document.getElementById("clientCodeInput").value.trim();
+  hideError();
+
+  if (!authKey)    { showError("يرجى إدخال مفتاح الـ API"); return; }
+  if (!clientCode) { showError("يرجى إدخال كود العميل"); return; }
+
+  setLoading("apiLogin", true);
+
+  try {
+    // التحقق من صحة المفاتيح عبر API النورس
+    const params = new URLSearchParams({
+      authentication_key: authKey,
+      main_client_code:   clientCode,
+    });
+    const res  = await fetch(`${BASE_URL}/get-government?${params}`, {
+      headers: { "Accept": "application/json" },
+    });
+    const data = await res.json();
+
+    if (data.success === 1) {
+      saveSession(authKey, clientCode, "مستخدم API");
+      setLoading("apiLogin", false);
+      showSuccess();
+    } else {
+      setLoading("apiLogin", false);
+      showError(data.error_msg || "مفاتيح الـ API غير صحيحة — تحقق منها");
+    }
+  } catch(e) {
+    // في حال تعذّر الاتصال — نقبل المفاتيح الموجودة
+    if (authKey === DEFAULT_CREDENTIALS.auth_key) {
+      saveSession(authKey, clientCode, "مستخدم API");
+      setLoading("apiLogin", false);
+      showSuccess();
+    } else {
+      setLoading("apiLogin", false);
+      showError("تعذّر التحقق من الـ API — تأكد من الاتصال بالإنترنت");
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  SESSION MANAGEMENT
+// ══════════════════════════════════════════
+function saveSession(authKey, clientCode, username) {
+  const session = {
+    auth_key:    authKey,
+    client_code: clientCode,
+    username,
+    logged_at:   new Date().toISOString(),
+    expires_at:  new Date(Date.now() + (rememberMe ? 30 : 1) * 24*3600*1000).toISOString(),
+  };
+  const storage = rememberMe ? localStorage : sessionStorage;
+  storage.setItem("ztm_session", JSON.stringify(session));
+}
+
+function getSession() {
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (!s) return null;
+  try {
+    const session = JSON.parse(s);
+    if (new Date(session.expires_at) < new Date()) {
+      localStorage.removeItem("ztm_session");
+      sessionStorage.removeItem("ztm_session");
+      return null;
+    }
+    return session;
+  } catch(e) { return null; }
+}
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function setLoading(which, on) {
+  if (which === "login") {
+    document.getElementById("loginSpinner").style.display  = on ? "block" : "none";
+    document.getElementById("loginArrow").style.display    = on ? "none"  : "inline";
+    document.getElementById("loginBtnText").textContent    = on ? "جارٍ التحقق..." : "تسجيل الدخول";
+    document.getElementById("loginBtn").disabled           = on;
+  } else {
+    document.getElementById("apiLoginSpinner").style.display = on ? "block" : "none";
+    document.getElementById("apiLoginBtnText").textContent   = on ? "جارٍ التحقق..." : "دخول بمفتاح API";
+    document.getElementById("apiLoginBtn").disabled          = on;
+  }
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ══════════════════════════════════════════
+//  INIT — التحقق من الجلسة الموجودة
+// ══════════════════════════════════════════
+document.addEventListener("DOMContentLoaded", () => {
+  const session = getSession();
+  if (session) {
+    // جلسة موجودة — انتقل مباشرة
+    showSuccess();
+    return;
+  }
+
+  // تعبئة بيانات محفوظة إذا وُجدت
+  const saved = localStorage.getItem("ztm_saved_user");
+  if (saved) {
+    document.getElementById("username").value = saved;
+    document.getElementById("rememberCb").classList.add("checked");
+    rememberMe = true;
+    document.getElementById("password").focus();
+  } else {
+    document.getElementById("username").focus();
+  }
+});
+</script>
+</body>
+</html>

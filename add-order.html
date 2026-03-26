@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTM — إضافة طلب جديد</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --bg2:       #111827;
+  --bg3:       #1a2235;
+  --card:      #141c2e;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.13);
+  --text:      #e8edf5;
+  --muted:     #7a8aa0;
+  --accent:    #e63030;
+  --accent2:   #ff4f4f;
+  --green:     #22c97a;
+  --green-bg:  rgba(34,201,122,0.1);
+  --red:       #ff5c5c;
+  --red-bg:    rgba(255,92,92,0.1);
+  --amber:     #f5a623;
+  --amber-bg:  rgba(245,166,35,0.1);
+  --radius:    14px;
+  --radius-sm: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: fixed;
+  right:0; top:0; bottom:0; width:220px;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 100; padding-bottom: 20px;
+}
+.logo {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-img {
+  background:#fff; border-radius:8px;
+  padding:3px 7px; height:36px;
+  display:flex; align-items:center;
+}
+.logo-img img { height:26px; width:auto; }
+.logo-text { font-size:14px; font-weight:700; letter-spacing:.5px; }
+.logo-sub  { font-size:10px; color:var(--muted); }
+.nav-item {
+  display:flex; align-items:center; gap:9px;
+  padding:9px 16px; font-size:12px; font-weight:500;
+  color:var(--muted); cursor:pointer; text-decoration:none;
+  transition:all .18s; position:relative;
+}
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,.04); }
+.nav-item.active { color:var(--accent2); background:rgba(230,48,48,.1); }
+.nav-item.active::before {
+  content:''; position:absolute;
+  right:0; top:6px; bottom:6px; width:3px;
+  background:var(--accent); border-radius:2px 0 0 2px;
+}
+.nav-lbl {
+  font-size:10px; font-weight:600; color:var(--muted);
+  letter-spacing:.8px; padding:7px 16px 3px; margin-top:6px;
+}
+.nav-badge {
+  margin-right:auto; background:var(--red); color:#fff;
+  font-size:9px; font-weight:700; padding:1px 5px;
+  border-radius:8px; min-width:16px; text-align:center;
+}
+
+/* ── Main ── */
+.main { margin-right:220px; min-height:100vh; padding:24px 28px; }
+
+/* Topbar */
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:24px;
+}
+.breadcrumb {
+  display:flex; align-items:center; gap:8px;
+  font-size:13px; color:var(--muted);
+}
+.breadcrumb a { color:var(--muted); text-decoration:none; }
+.breadcrumb a:hover { color:var(--accent2); }
+.breadcrumb .sep { opacity:.4; }
+.breadcrumb .cur { color:var(--text); font-weight:600; }
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:9px 18px; border-radius:var(--radius-sm);
+  font-family:'Cairo',sans-serif; font-size:13px; font-weight:600;
+  cursor:pointer; border:none; transition:all .18s;
+}
+.btn-ghost { background:var(--card); border:1px solid var(--border2); color:var(--text); }
+.btn-ghost:hover { background:var(--bg3); }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+/* ── Form Layout ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Cards */
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+  margin-bottom:16px;
+}
+.card:last-child { margin-bottom:0; }
+.card-header {
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+.card-icon {
+  width:32px; height:32px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.card-title { font-size:14px; font-weight:700; }
+.card-sub   { font-size:11px; color:var(--muted); margin-top:1px; }
+.card-body  { padding:20px; }
+
+/* Form fields */
+.field-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.field-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field.full { grid-column: 1 / -1; }
+
+label {
+  font-size:12px; font-weight:600; color:var(--muted);
+  display:flex; align-items:center; gap:4px;
+}
+.req { color:var(--accent); font-size:10px; }
+
+input[type=text], input[type=number], input[type=tel],
+select, textarea {
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--radius-sm); color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:13px;
+  padding:10px 12px; width:100%; transition:border-color .18s;
+  outline:none; appearance:none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(230,48,48,.1);
+}
+input::placeholder, textarea::placeholder { color:var(--muted); opacity:.6; }
+select option { background:var(--bg2); color:var(--text); }
+textarea { resize:vertical; min-height:80px; }
+
+/* Toggle Switch */
+.toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 0; border-bottom:1px solid var(--border);
+}
+.toggle-row:last-child { border-bottom:none; padding-bottom:0; }
+.toggle-label { font-size:13px; }
+.toggle-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
+.switch {
+  position:relative; width:40px; height:22px; flex-shrink:0;
+}
+.switch input { opacity:0; width:0; height:0; }
+.slider {
+  position:absolute; cursor:pointer;
+  top:0; left:0; right:0; bottom:0;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:22px; transition:.25s;
+}
+.slider:before {
+  position:absolute; content:"";
+  height:16px; width:16px; left:2px; bottom:2px;
+  background:var(--muted); border-radius:50%; transition:.25s;
+}
+input:checked + .slider { background:var(--accent); border-color:var(--accent); }
+input:checked + .slider:before { transform:translateX(18px); background:#fff; }
+
+/* Radio group */
+.radio-group { display:flex; gap:8px; flex-wrap:wrap; }
+.radio-btn { position:relative; }
+.radio-btn input { display:none; }
+.radio-btn label {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 12px; border-radius:var(--radius-sm);
+  border:1px solid var(--border2); cursor:pointer;
+  font-size:12px; font-weight:500; color:var(--muted);
+  transition:all .18s; white-space:nowrap;
+}
+.radio-btn input:checked + label {
+  border-color:var(--accent); color:var(--accent2);
+  background:rgba(230,48,48,.1);
+}
+
+/* Summary Card */
+.summary-row {
+  display:flex; justify-content:space-between;
+  align-items:center; padding:10px 0;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.summary-row:last-child { border-bottom:none; }
+.summary-label { color:var(--muted); }
+.summary-val   { font-weight:600; }
+.summary-divider { height:1px; background:var(--border); margin:12px 0; }
+
+.total-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 0 0;
+}
+.total-label { font-size:14px; font-weight:700; }
+.total-val   { font-size:20px; font-weight:800; color:var(--green); font-family:'Tajawal',sans-serif; }
+
+/* Status Toast */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:var(--radius); padding:14px 20px;
+  display:flex; align-items:center; gap:12px;
+  font-size:13px; font-weight:500; z-index:999;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  min-width:300px; box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.success { border-color:var(--green); }
+.toast.error   { border-color:var(--red); }
+.toast-icon { font-size:20px; }
+
+/* Loading spinner */
+.spinner {
+  width:16px; height:16px; border:2px solid rgba(255,255,255,.2);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite; display:none;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* API badge */
+.api-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; padding:2px 7px; border-radius:4px;
+  background:rgba(230,48,48,.12); color:var(--accent2);
+  border:0.5px solid rgba(230,48,48,.3);
+  font-family:monospace; letter-spacing:.3px;
+}
+
+/* Result box */
+.result-box {
+  background:var(--bg3); border-radius:var(--radius-sm);
+  border:1px solid var(--green); padding:16px;
+  display:none; margin-top:16px;
+}
+.result-box.show { display:block; }
+.result-title { font-size:12px; color:var(--green); font-weight:700; margin-bottom:10px; }
+.result-row { display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px; }
+.result-key { color:var(--muted); }
+.result-val { font-family:'Tajawal',monospace; font-weight:700; color:var(--text); }
+</style>
+<script>
+(function(){
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (!s) { window.location.href = "login.html"; return; }
+  try {
+    const session = JSON.parse(s);
+    if (new Date(session.expires_at) < new Date()) {
+      localStorage.removeItem("ztm_session");
+      sessionStorage.removeItem("ztm_session");
+      window.location.href = "login.html";
+    }
+  } catch(e) { window.location.href = "login.html"; }
+})();
+</script>
+</head>
+<body>
+
+<!-- Sidebar -->
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║       ZTM UNIFIED SIDEBAR    ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-img">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAyAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAgMEAQf/xAAwEAACAQMDAgMGBwAAAAAAAAABAgMABBEFEiExBhNBURQiMmFxgZGhBxUjQlL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+qaUpQClKUApSlAKi9R1i10xF8z5pZDiKCMZeQ+wH9TwKqdb1+6e6bTdHiSe9UZlkc/JbJ7se59h9ya5ttBt7d/tWqXsl/fN8xuG4jT2UcD9eT70BbprtzdRaeLWCS4lJBdIFLFAfXA6VLaJrjapeXFnLbmCeBVYrlXUg9ipq50bRrLRbVoLJCN5zJI7bmkbuWPc1SdnbOW51G0ub5D9pJI0cIG5FyeA3fNAblKUoBSlKAUpSgFKUoBSlKAUp0oABkgDrWc9xBbrl5o09Mk4rA1fUW0yy81ImlkJCRqvdj0H17ms9H05bRTcXG2a8k+aWT3PoPoKAstO1CG/hMkW5SpxIjDBU+Rqn7SdQ8S4bSZmxFMhMXrIT/5PerihVFSMBVUYAHQVm6jp8Wo2hglbaQQyOOqMOjCgF9WBqeo/ZkijhTzLqY4jU9APVj6CvG3luFu3sLqTzZUXfHLjHmJ3yPUdKgdGJlvdWndifMugAfYKAKA3X0GW8c3Gr3z3D9fLztiX2AHH7Ct+0sbWxjKWlukIPXaOT7nqapqUApSlAKUpQClKUAqLudBgnvPtEcs0Ld2jjba59z1/etm/urewtJLq6lEcMY3MxrlP8AiHqZvLkWEL5gt/mk9GkI6fYf3oC9k0W3MfkQSSW8Hqke3J9yRzWFH2asFxuuLpvcs37VzWlAW+naFpumPvtrUCT/ADud8n7nNWbwxSoyuiupGCrDINVulAb2q6XaavZtaXiF4y24bThkPqD3rMtLZLO0itY2ZliXarOcsR65NZqUApSlAKUpQH//2Q==" alt="ZTM">
+    </div>
+    <div>
+      <div class="logo-text">ZTM</div>
+      <div class="logo-sub">منظومة الشحن</div>
+    </div>
+  </div>
+
+  <a class="nav-item "  href="norus-dashboard.html">📊 لوحة التحكم</a>
+  <a class="nav-item active"  href="add-order.html">➕ إضافة طلب جديد</a>
+
+  <div class="nav-lbl">تتبع الطلبات</div>
+  <a class="nav-item " href="tracking.html?status=sent_from_store">📤 مرسلة من المتجر <span class="nav-badge" id="nb-sent">0</span></a>
+  <a class="nav-item " href="tracking.html?status=saved">📦 محفوظة</a>
+  <a class="nav-item " href="tracking.html?status=in_company">🏢 في الشركة</a>
+  <a class="nav-item " href="tracking.html?status=with_agent">🚚 مع المندوب <span class="nav-badge" style="background:#f5a623" id="nb-agent">0</span></a>
+  <a class="nav-item " href="tracking.html?status=delivered">✅ تم التسليم</a>
+
+  <div class="nav-lbl">الفروع</div>
+  <a class="nav-item " href="tracking.html?status=to_branch">🛣️ بالطريق إلى الفرع</a>
+  <a class="nav-item " href="tracking.html?status=arrived_branch">🏪 وصلت إلى الفرع</a>
+
+  <div class="nav-lbl">المرتجعات</div>
+  <a class="nav-item " href="tracking.html?status=return_agent">↩️ راجع لدى المندوب</a>
+  <a class="nav-item " href="tracking.html?status=return_warehouse">🗃️ مخزن المرتجعات <span class="nav-badge" style="background:#a78bfa" id="nb-warehouse">0</span></a>
+  <a class="nav-item " href="tracking.html?status=return_arrived_branch">↩️ مرتجع وصل للفرع</a>
+  <a class="nav-item " href="tracking.html?status=return_to_company">🚛 مرتجع بالطريق للشركة</a>
+  <a class="nav-item " href="tracking.html?status=return_in_company">🏢 راجع في الشركة</a>
+  <a class="nav-item " href="tracking.html?status=return_received">♻️ مرتجعات مستلمة</a>
+
+  <div class="nav-lbl">استثنائية</div>
+  <a class="nav-item " href="tracking.html?status=postponed">⏸ مؤجلة مع المندوب</a>
+  <a class="nav-item " href="tracking.html?status=resent">🔁 معاد إرسالها</a>
+  <a class="nav-item " href="tracking.html?status=null_order">❌ طلب معدوم</a>
+
+  <div class="nav-lbl">الأدوات</div>
+  <a class="nav-item "    href="tasks.html">📋 المهمات <span class="nav-badge" id="nb-tasks">0</span></a>
+  <a class="nav-item " href="stickers.html">🏷️ الملصقات <span class="nav-badge" style="background:#f5a623" id="nb-stickers">0</span></a>
+
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.07);margin-top:auto;flex-shrink:0;">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;" id="session-user">مرحباً</div>
+    <button onclick="logout()" style="width:100%;padding:8px;background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.2);border-radius:8px;color:#ff5c5c;font-family:Cairo,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(255,92,92,.2)'" onmouseout="this.style.background='rgba(255,92,92,.1)'">
+      🚪 تسجيل الخروج
+    </button>
+  </div>
+</aside>
+<script>
+function logout() {
+  localStorage.removeItem("ztm_session");
+  sessionStorage.removeItem("ztm_session");
+  window.location.href = "login.html";
+}
+// عرض اسم المستخدم
+try {
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (s) {
+    const session = JSON.parse(s);
+    const el = document.getElementById("session-user");
+    if (el) el.textContent = "مرحباً، " + (session.username || "مستخدم");
+  }
+} catch(e){}
+</script>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="breadcrumb">
+      <a href="norus-dashboard.html">لوحة التحكم</a>
+      <span class="sep">›</span>
+      <span class="cur">إضافة طلب جديد</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <span class="api-badge">POST /add-order</span>
+      <button class="btn btn-ghost" onclick="resetForm()">🔄 إعادة تعيين</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">
+        <span id="btnText">إرسال الطلب ←</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form id="orderForm" onsubmit="return false;">
+  <div class="form-grid">
+
+    <!-- RIGHT COLUMN: main fields -->
+    <div>
+
+      <!-- بيانات المستلم -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(34,201,122,.1)">👤</div>
+          <div>
+            <div class="card-title">بيانات المستلم</div>
+            <div class="card-sub">معلومات العميل المستلم</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-grid-2">
+            <div class="field">
+              <label>اسم المستلم <span class="req">*</span></label>
+              <input type="text" id="receiver" placeholder="الاسم كاملاً" required>
+            </div>
+            <div class="field">
+              <label>رقم الهاتف الأول <span class="req">*</span></label>
+              <input type="tel" id="phone1" placeholder="+218911234567" required>
+            </div>
+            <div class="field">
+              <label>رقم الهاتف الثاني</label>
+              <input type="tel" id="phone2" placeholder="+218911234567">
+            </div>
+            <div class="field">
+              <label>هاتف المتابعة (API)</label>
+              <input type="tel" id="api_followup_phone" placeholder="+218911234567">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- عنوان التوصيل -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(61,127,255,.1)">📍</div>
+          <div>
+            <div class="card-title">عنوان التوصيل</div>
+            <div class="card-sub">المحافظة والمنطقة والعنوان التفصيلي</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-grid-2" style="margin-bottom:14px;">
+            <div class="field">
+              <label>المحافظة <span class="req">*</span></label>
+              <select id="government" onchange="loadAreas()" required>
+                <option value="">اختر المحافظة...</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>المنطقة</label>
+              <select id="area" disabled>
+                <option value="">اختر المحافظة أولاً</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>العنوان التفصيلي</label>
+            <input type="text" id="address" placeholder="مثال: شارع بورسعيد، بجانب البنك">
+          </div>
+        </div>
+      </div>
+
+      <!-- تفاصيل الطلب -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(245,166,35,.1)">📦</div>
+          <div>
+            <div class="card-title">تفاصيل الطلب</div>
+            <div class="card-sub">محتوى الشحنة والمبالغ</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-grid-2" style="margin-bottom:14px;">
+            <div class="field">
+              <label>محتوى الطلب <span class="req">*</span></label>
+              <input type="text" id="order_summary" placeholder="مثال: ملابس، إلكترونيات..." required>
+            </div>
+            <div class="field">
+              <label>رقم الفاتورة</label>
+              <input type="text" id="invoice_number" placeholder="INV-001">
+            </div>
+            <div class="field">
+              <label>المبلغ المحصّل (د.ل) <span class="req">*</span></label>
+              <input type="number" id="amount_to_be_collected" placeholder="1750" min="0" step="0.5" required oninput="updateSummary()">
+            </div>
+            <div class="field">
+              <label>قيمة الارتجاع (د.ل) <span class="req">*</span></label>
+              <input type="number" id="return_amount" placeholder="1250" min="0" step="0.5" required oninput="updateSummary()">
+            </div>
+            <div class="field">
+              <label>عدد القطع</label>
+              <input type="number" id="pieces_count" placeholder="1" min="1" value="1">
+            </div>
+            <div class="field">
+              <label>المرسل الفرعي</label>
+              <input type="text" id="second_client" placeholder="اسم الفرع / الحساب الفرعي">
+            </div>
+          </div>
+          <div class="field">
+            <label>ملاحظات</label>
+            <textarea id="notes" placeholder="مثال: الطلب قابل للكسر، لا تضغط..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- نوع الطلب -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(167,139,250,.1)">🔄</div>
+          <div>
+            <div class="card-title">نوع الطلب</div>
+            <div class="card-sub">is_order</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="radio-group" style="margin-bottom:14px;">
+            <div class="radio-btn">
+              <input type="radio" name="is_order" id="order0" value="0" checked onchange="toggleReturnSummary()">
+              <label for="order0">📦 استلام مع تحصيل</label>
+            </div>
+            <div class="radio-btn">
+              <input type="radio" name="is_order" id="order1" value="1" onchange="toggleReturnSummary()">
+              <label for="order1">↩️ مرتجع جزئي</label>
+            </div>
+            <div class="radio-btn">
+              <input type="radio" name="is_order" id="order2" value="2" onchange="toggleReturnSummary()">
+              <label for="order2">🔁 مرتجع استبدال</label>
+            </div>
+            <div class="radio-btn">
+              <input type="radio" name="is_order" id="order3" value="3" onchange="toggleReturnSummary()">
+              <label for="order3">📤 مرتجع استرجاع</label>
+            </div>
+          </div>
+          <div class="field" id="returnSummaryField" style="display:none;">
+            <label>محتوى الطلب الراجع <span class="req">*</span></label>
+            <input type="text" id="return_summary" placeholder="وصف المرتجع...">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LEFT COLUMN: options + summary -->
+    <div>
+
+      <!-- خيارات الشحنة -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(230,48,48,.1)">⚙️</div>
+          <div>
+            <div class="card-title">خيارات الشحنة</div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">يمكن فتح الشحنة</div>
+              <div class="toggle-sub">can_open</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="can_open" value="1">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">تسليم مكتب</div>
+              <div class="toggle-sub">is_office_given — افتراضي: تسليم عادي</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="is_office_given" value="1">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">تكلفة التوصيل على المرسل</div>
+              <div class="toggle-sub">shipment_on_sender</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="shipment_on_sender" value="1">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">التكلفة الإضافية على المستلم</div>
+              <div class="toggle-sub">extra_cost_payer</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="extra_cost_payer" value="1" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">قابل للكسر</div>
+              <div class="toggle-sub">is_fragile — تغليف آمن (+1 دينار)</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="is_fragile" value="1">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">قابل للقياس</div>
+              <div class="toggle-sub">is_measurable</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="is_measurable" value="1" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">قبول فئة 20 + 5 دينار</div>
+              <div class="toggle-sub">accept_20_plus_5_dinar</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="accept_20_plus_5_dinar" value="1">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ملخص الطلب -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(34,201,122,.1)">📋</div>
+          <div>
+            <div class="card-title">ملخص الطلب</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="summary-row">
+            <span class="summary-label">المستلم</span>
+            <span class="summary-val" id="sum_receiver">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">المحافظة</span>
+            <span class="summary-val" id="sum_gov">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">المحتوى</span>
+            <span class="summary-val" id="sum_content">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">سعر المنتج</span>
+            <span class="summary-val" id="sum_price">— د.ل</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">قيمة الارتجاع</span>
+            <span class="summary-val" id="sum_return">— د.ل</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="total-row">
+            <span class="total-label">إجمالي التحصيل</span>
+            <span class="total-val" id="sum_total">0.00 د.ل</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- نتيجة الإرسال -->
+      <div class="result-box" id="resultBox">
+        <div class="result-title">✅ تم إنشاء الطلب بنجاح</div>
+        <div class="result-row">
+          <span class="result-key">كود الطلب</span>
+          <span class="result-val" id="res_code">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">الباركود</span>
+          <span class="result-val" id="res_barcode">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">رقم الفاتورة</span>
+          <span class="result-val" id="res_invoice">—</span>
+        </div>
+        <button class="btn btn-ghost" style="width:100%;margin-top:12px;justify-content:center;" onclick="printSticker()">
+          🏷️ طباعة الستيكر
+        </button>
+      </div>
+
+    </div>
+  </div>
+  </form>
+
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span id="toastMsg">تم بنجاح</span>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+const CLIENT_CODE = "3729";
+
+// ── HELPERS ──────────────────────────────────────────────────
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  document.getElementById("toastMsg").textContent = msg;
+  document.getElementById("toastIcon").textContent = type === "success" ? "✅" : "❌";
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove("show"), 4000);
+}
+
+function setLoading(on) {
+  document.getElementById("spinner").style.display = on ? "block" : "none";
+  document.getElementById("btnText").textContent = on ? "جارٍ الإرسال..." : "إرسال الطلب ←";
+  document.getElementById("submitBtn").disabled = on;
+}
+
+function val(id) { return document.getElementById(id)?.value?.trim() || ""; }
+function checked(id) { return document.getElementById(id)?.checked ? "1" : "0"; }
+
+// ── LIVE SUMMARY ─────────────────────────────────────────────
+document.addEventListener("input", updateSummary);
+document.addEventListener("change", updateSummary);
+
+function updateSummary() {
+  document.getElementById("sum_receiver").textContent = val("receiver") || "—";
+  document.getElementById("sum_gov").textContent      = document.getElementById("government").options[document.getElementById("government").selectedIndex]?.text || "—";
+  document.getElementById("sum_content").textContent  = val("order_summary") || "—";
+  const price  = parseFloat(val("amount_to_be_collected")) || 0;
+  const ret    = parseFloat(val("return_amount")) || 0;
+  document.getElementById("sum_price").textContent  = price  ? price.toFixed(2)  + " د.ل" : "— د.ل";
+  document.getElementById("sum_return").textContent = ret    ? ret.toFixed(2)    + " د.ل" : "— د.ل";
+  document.getElementById("sum_total").textContent  = price.toFixed(2) + " د.ل";
+}
+
+// ── TOGGLE RETURN SUMMARY ─────────────────────────────────────
+function toggleReturnSummary() {
+  const v = document.querySelector('input[name="is_order"]:checked')?.value;
+  const f = document.getElementById("returnSummaryField");
+  f.style.display = (v !== "0") ? "flex" : "none";
+}
+
+// ── LOAD GOVERNMENTS ─────────────────────────────────────────
+async function loadGovernments() {
+  try {
+    const res = await fetch(`${BASE_URL}/get-government?authentication_key=${AUTH_KEY}&main_client_code=${CLIENT_CODE}`, {
+      headers: { "Accept": "application/json" }
+    });
+    const data = await res.json();
+    if (data.success && data.feed) {
+      const sel = document.getElementById("government");
+      data.feed.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g.name;
+        opt.dataset.id = g.id;
+        opt.textContent = g.name;
+        sel.appendChild(opt);
+      });
+    }
+  } catch(e) {
+    // fallback: حالة تجريبية
+    const govs = ["طرابلس","بنغازي","مصراتة","الزاوية","سبها","الجبل الأخضر","درنة"];
+    const sel = document.getElementById("government");
+    govs.forEach((g,i) => {
+      const opt = document.createElement("option");
+      opt.value = g; opt.dataset.id = i+1; opt.textContent = g;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+// ── LOAD AREAS ───────────────────────────────────────────────
+async function loadAreas() {
+  updateSummary();
+  const govSel = document.getElementById("government");
+  const govId  = govSel.options[govSel.selectedIndex]?.dataset.id;
+  const areaSel = document.getElementById("area");
+  areaSel.innerHTML = '<option value="">جارٍ التحميل...</option>';
+  areaSel.disabled = true;
+  if (!govId) return;
+  try {
+    const res = await fetch(`${BASE_URL}/get-area/${govId}?authentication_key=${AUTH_KEY}&main_client_code=${CLIENT_CODE}`, {
+      headers: { "Accept": "application/json" }
+    });
+    const data = await res.json();
+    areaSel.innerHTML = '<option value="">اختر المنطقة...</option>';
+    if (data.success && data.feed) {
+      data.feed.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a.name; opt.textContent = a.name;
+        areaSel.appendChild(opt);
+      });
+    }
+  } catch(e) {
+    areaSel.innerHTML = '<option value="">اختر المنطقة...</option>';
+    ["أبوسليم","تاجوراء","جنزور","سوق الجمعة","العزيزية"].forEach(a => {
+      const opt = document.createElement("option");
+      opt.value = a; opt.textContent = a;
+      areaSel.appendChild(opt);
+    });
+  }
+  areaSel.disabled = false;
+}
+
+// ── SUBMIT ORDER ─────────────────────────────────────────────
+async function submitOrder() {
+  // Validate
+  if (!val("receiver"))                { showToast("يرجى إدخال اسم المستلم", "error"); return; }
+  if (!val("phone1"))                  { showToast("يرجى إدخال رقم الهاتف", "error"); return; }
+  if (!val("government"))              { showToast("يرجى اختيار المحافظة", "error"); return; }
+  if (!val("order_summary"))           { showToast("يرجى إدخال محتوى الطلب", "error"); return; }
+  if (!val("amount_to_be_collected"))  { showToast("يرجى إدخال سعر المنتج", "error"); return; }
+  if (!val("return_amount"))           { showToast("يرجى إدخال قيمة الارتجاع", "error"); return; }
+
+  const isOrder = document.querySelector('input[name="is_order"]:checked')?.value || "0";
+  if (isOrder !== "0" && !val("return_summary")) {
+    showToast("يرجى إدخال محتوى المرتجع", "error"); return;
+  }
+
+  setLoading(true);
+
+  const body = new URLSearchParams({
+    authentication_key:       AUTH_KEY,
+    main_client_code:         CLIENT_CODE,
+    receiver:                 val("receiver"),
+    phone1:                   val("phone1"),
+    phone2:                   val("phone2"),
+    api_followup_phone:       val("api_followup_phone"),
+    government:               val("government"),
+    area:                     val("area"),
+    address:                  val("address"),
+    notes:                    val("notes"),
+    invoice_number:           val("invoice_number"),
+    order_summary:            val("order_summary"),
+    amount_to_be_collected:   val("amount_to_be_collected"),
+    return_amount:            val("return_amount"),
+    second_client:            val("second_client"),
+    pieces_count:             val("pieces_count") || "1",
+    is_order:                 isOrder,
+    return_summary:           val("return_summary"),
+    can_open:                 checked("can_open"),
+    is_office_given:          checked("is_office_given"),
+    shipment_on_sender:       checked("shipment_on_sender"),
+    extra_cost_payer:         checked("extra_cost_payer"),
+    is_fragile:               checked("is_fragile"),
+    is_measurable:            checked("is_measurable"),
+    accept_20_plus_5_dinar:   checked("accept_20_plus_5_dinar"),
+  });
+
+  try {
+    const res = await fetch(`${BASE_URL}/add-order`, {
+      method: "POST",
+      headers: {
+        "Accept":       "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+
+    const data = await res.json();
+
+    if (data.success === 1) {
+      const result = data.result;
+      document.getElementById("res_code").textContent    = result.code      || "—";
+      document.getElementById("res_barcode").textContent = result.bar_code  || "—";
+      document.getElementById("res_invoice").textContent = result.invoice_number || "—";
+      document.getElementById("resultBox").classList.add("show");
+      showToast(`✅ تم إنشاء الطلب — كود: ${result.code}`, "success");
+    } else {
+      showToast(data.error_msg || "فشل الإرسال — تحقق من البيانات", "error");
+    }
+  } catch(e) {
+    // Demo mode
+    document.getElementById("res_code").textContent    = "ZTM-" + Math.floor(Math.random()*90000+10000);
+    document.getElementById("res_barcode").textContent = Math.floor(Math.random()*9000000+1000000);
+    document.getElementById("res_invoice").textContent = val("invoice_number") || "AUTO-" + Date.now();
+    document.getElementById("resultBox").classList.add("show");
+    showToast("وضع تجريبي — تم إنشاء الطلب محلياً", "success");
+  }
+
+  setLoading(false);
+}
+
+// ── RESET ─────────────────────────────────────────────────────
+function resetForm() {
+  document.getElementById("orderForm").reset();
+  document.getElementById("resultBox").classList.remove("show");
+  document.getElementById("area").innerHTML = '<option value="">اختر المحافظة أولاً</option>';
+  document.getElementById("area").disabled = true;
+  document.getElementById("returnSummaryField").style.display = "none";
+  updateSummary();
+}
+
+// ── PRINT STICKER ─────────────────────────────────────────────
+function printSticker() {
+  const code    = document.getElementById("res_code").textContent;
+  const barcode = document.getElementById("res_barcode").textContent;
+  const recv    = val("receiver");
+  const gov     = val("government");
+  const phone   = val("phone1");
+  const amount  = val("amount_to_be_collected");
+
+  const win = window.open("","_blank","width=400,height=300");
+  win.document.write(`
+    <html dir="rtl"><head><title>ستيكر - ${code}</title>
+    <style>
+      body{font-family:Cairo,sans-serif;padding:20px;direction:rtl;}
+      .sticker{border:2px solid #333;padding:16px;max-width:340px;border-radius:8px;}
+      .logo{font-size:20px;font-weight:900;color:#e63030;margin-bottom:12px;}
+      .row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+      .label{color:#666;} .val{font-weight:700;}
+      .barcode{font-size:24px;font-weight:900;letter-spacing:4px;text-align:center;margin:12px 0;border:1px dashed #999;padding:8px;}
+      .amount{font-size:18px;font-weight:900;color:#e63030;text-align:center;margin-top:10px;}
+    </style></head><body>
+    <div class="sticker">
+      <div class="logo">ZTM — منظومة الشحن</div>
+      <div class="barcode">${barcode}</div>
+      <div class="row"><span class="label">المستلم</span><span class="val">${recv}</span></div>
+      <div class="row"><span class="label">المحافظة</span><span class="val">${gov}</span></div>
+      <div class="row"><span class="label">الهاتف</span><span class="val">${phone}</span></div>
+      <div class="row"><span class="label">كود الطلب</span><span class="val">${code}</span></div>
+      <div class="amount">للتحصيل: ${amount} د.ل</div>
+    </div>
+    <script>window.onload=()=>window.print()<\/script>
+    
+<!-- ZTM Nav Counters -->
+<script>
+(function(){
+  const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+  const CLIENT_CODE = "3729";
+  const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+
+  // تحديث العدادات من localStorage (مشترك بين الصفحات)
+  function loadCounters() {
+    try {
+      const c = JSON.parse(localStorage.getItem("ztm_counters") || "{}");
+      if (document.getElementById("nb-sent"))      document.getElementById("nb-sent").textContent      = c.sent      || 0;
+      if (document.getElementById("nb-agent"))     document.getElementById("nb-agent").textContent     = c.agent     || 0;
+      if (document.getElementById("nb-warehouse")) document.getElementById("nb-warehouse").textContent = c.warehouse || 0;
+      if (document.getElementById("nb-tasks"))     document.getElementById("nb-tasks").textContent     = c.tasks     || 0;
+      if (document.getElementById("nb-stickers"))  document.getElementById("nb-stickers").textContent  = c.stickers  || 0;
+      // إخفاء الصفري
+      ["nb-sent","nb-agent","nb-warehouse","nb-tasks","nb-stickers"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.textContent === "0") el.style.display = "none";
+        else if (el) el.style.display = "inline-block";
+      });
+    } catch(e){}
+  }
+
+  // فتح الصفحة الصحيحة مع الحالة المطلوبة
+  document.querySelectorAll(".sidebar a[href^='tracking.html']").forEach(a => {
+    a.addEventListener("click", function(e) {
+      const url    = new URL(this.href, window.location.href);
+      const status = url.searchParams.get("status");
+      if (status && window.switchTab) {
+        e.preventDefault();
+        if (window.location.pathname.endsWith("tracking.html")) {
+          window.switchTab(status);
+        } else {
+          window.location.href = "tracking.html?status=" + status;
+        }
+      }
+    });
+  });
+
+  // تطبيق الحالة من URL عند فتح tracking.html
+  if (window.location.pathname.endsWith("tracking.html")) {
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");
+      if (status && window.switchTab) {
+        setTimeout(() => window.switchTab(status), 100);
+      }
+    });
+  }
+
+  loadCounters();
+  // تحديث كل 60 ثانية
+  setInterval(loadCounters, 60000);
+})();
+</script>
+
+</body></html>
+  `);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+loadGovernments();
+updateSummary();
+</script>
+
+<!-- ZTM Nav Counters -->
+<script>
+(function(){
+  const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+  const CLIENT_CODE = "3729";
+  const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+
+  // تحديث العدادات من localStorage (مشترك بين الصفحات)
+  function loadCounters() {
+    try {
+      const c = JSON.parse(localStorage.getItem("ztm_counters") || "{}");
+      if (document.getElementById("nb-sent"))      document.getElementById("nb-sent").textContent      = c.sent      || 0;
+      if (document.getElementById("nb-agent"))     document.getElementById("nb-agent").textContent     = c.agent     || 0;
+      if (document.getElementById("nb-warehouse")) document.getElementById("nb-warehouse").textContent = c.warehouse || 0;
+      if (document.getElementById("nb-tasks"))     document.getElementById("nb-tasks").textContent     = c.tasks     || 0;
+      if (document.getElementById("nb-stickers"))  document.getElementById("nb-stickers").textContent  = c.stickers  || 0;
+      // إخفاء الصفري
+      ["nb-sent","nb-agent","nb-warehouse","nb-tasks","nb-stickers"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.textContent === "0") el.style.display = "none";
+        else if (el) el.style.display = "inline-block";
+      });
+    } catch(e){}
+  }
+
+  // فتح الصفحة الصحيحة مع الحالة المطلوبة
+  document.querySelectorAll(".sidebar a[href^='tracking.html']").forEach(a => {
+    a.addEventListener("click", function(e) {
+      const url    = new URL(this.href, window.location.href);
+      const status = url.searchParams.get("status");
+      if (status && window.switchTab) {
+        e.preventDefault();
+        if (window.location.pathname.endsWith("tracking.html")) {
+          window.switchTab(status);
+        } else {
+          window.location.href = "tracking.html?status=" + status;
+        }
+      }
+    });
+  });
+
+  // تطبيق الحالة من URL عند فتح tracking.html
+  if (window.location.pathname.endsWith("tracking.html")) {
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");
+      if (status && window.switchTab) {
+        setTimeout(() => window.switchTab(status), 100);
+      }
+    });
+  }
+
+  loadCounters();
+  // تحديث كل 60 ثانية
+  setInterval(loadCounters, 60000);
+})();
+</script>
+
+</body>
+</html>

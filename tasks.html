@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTM — المهمات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0b0f1a;
+  --bg2:     #111827;
+  --bg3:     #1a2235;
+  --card:    #141c2e;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #e8edf5;
+  --muted:   #7a8aa0;
+  --accent:  #e63030;
+  --accent2: #ff4f4f;
+  --green:   #22c97a;
+  --red:     #ff5c5c;
+  --amber:   #f5a623;
+  --purple:  #a78bfa;
+  --blue:    #3d7fff;
+  --teal:    #2dd4bf;
+  --r:       14px;
+  --r-sm:    8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Cairo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* Sidebar */
+.sidebar {
+  position:fixed; right:0; top:0; bottom:0; width:220px;
+  background:var(--card); border-left:1px solid var(--border);
+  display:flex; flex-direction:column; z-index:100; overflow-y:auto;
+}
+.logo { padding:18px 16px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.logo-img { background:#fff; border-radius:8px; padding:3px 7px; height:34px; display:flex; align-items:center; }
+.logo-img img { height:24px; width:auto; }
+.logo-text { font-size:14px; font-weight:700; }
+.logo-sub  { font-size:10px; color:var(--muted); }
+.nav-lbl   { font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.8px; padding:7px 16px 3px; margin-top:4px; }
+.nav-item  {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 16px; font-size:12px; font-weight:500;
+  color:var(--muted); cursor:pointer; text-decoration:none;
+  transition:all .15s; position:relative;
+}
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,.04); }
+.nav-item.active { color:var(--accent2); background:rgba(230,48,48,.1); }
+.nav-item.active::before {
+  content:''; position:absolute; right:0; top:5px; bottom:5px;
+  width:3px; background:var(--accent); border-radius:2px 0 0 2px;
+}
+.nav-badge { margin-right:auto; background:var(--red); color:#fff; font-size:9px; font-weight:700; padding:1px 5px; border-radius:8px; min-width:16px; text-align:center; }
+
+/* Main */
+.main { margin-right:220px; min-height:100vh; padding:24px 28px; }
+
+/* Topbar */
+.topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+.breadcrumb a { color:var(--muted); text-decoration:none; }
+.breadcrumb a:hover { color:var(--accent2); }
+.breadcrumb .cur { color:var(--text); font-weight:600; }
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:9px 18px; border-radius:var(--r-sm);
+  font-family:'Cairo',sans-serif; font-size:13px; font-weight:600;
+  cursor:pointer; border:none; transition:all .18s;
+}
+.btn-ghost   { background:var(--card); border:1px solid var(--border2); color:var(--text); }
+.btn-ghost:hover { background:var(--bg3); }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.btn-green  { background:var(--green); color:#fff; }
+.btn-green:hover { opacity:.9; }
+
+/* KPI */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+.kpi-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); padding:16px 18px;
+  position:relative; overflow:hidden; transition:border-color .2s;
+}
+.kpi-card:hover { border-color:var(--border2); }
+.kpi-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.kpi-card.c-amber::after { background:var(--amber); }
+.kpi-card.c-green::after  { background:var(--green); }
+.kpi-card.c-red::after    { background:var(--red); }
+.kpi-card.c-blue::after   { background:var(--blue); }
+.kpi-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.kpi-icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.kpi-val  { font-size:26px; font-weight:800; font-family:'Tajawal',sans-serif; line-height:1; }
+.kpi-lbl  { font-size:11px; color:var(--muted); margin-top:3px; }
+
+/* Tabs */
+.task-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:0; }
+.task-tab {
+  padding:10px 18px; font-size:13px; font-weight:600;
+  color:var(--muted); cursor:pointer; border-bottom:2px solid transparent;
+  transition:all .18s; display:flex; align-items:center; gap:6px;
+}
+.task-tab:hover { color:var(--text); }
+.task-tab.active { color:var(--accent2); border-bottom-color:var(--accent); }
+.tab-badge {
+  font-size:10px; padding:1px 6px; border-radius:8px; font-weight:700;
+  background:rgba(230,48,48,.15); color:var(--accent2);
+}
+
+/* Content Grid */
+.content-grid { display:grid; grid-template-columns:1fr 360px; gap:18px; align-items:start; }
+
+/* Task Cards */
+.task-list { display:flex; flex-direction:column; gap:12px; }
+
+.task-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+  transition:border-color .2s, transform .2s;
+  animation:fadeUp .35s ease both;
+}
+.task-card:hover { border-color:var(--border2); transform:translateY(-1px); }
+
+.task-card-header {
+  padding:14px 18px;
+  display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--border);
+}
+.task-type-icon {
+  width:38px; height:38px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.task-info { flex:1; }
+.task-title { font-size:14px; font-weight:700; }
+.task-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
+.task-status-badge {
+  font-size:10px; font-weight:700; padding:4px 10px;
+  border-radius:20px; white-space:nowrap;
+}
+
+.task-card-body { padding:14px 18px; }
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.detail-item { background:var(--bg3); border-radius:6px; padding:8px 10px; }
+.detail-label { font-size:10px; color:var(--muted); margin-bottom:3px; }
+.detail-val   { font-size:13px; font-weight:700; }
+
+.task-actions { display:flex; gap:8px; }
+.task-btn {
+  flex:1; padding:8px; border-radius:var(--r-sm);
+  font-family:'Cairo',sans-serif; font-size:12px; font-weight:600;
+  cursor:pointer; border:none; transition:all .18s; text-align:center;
+}
+.task-btn-approve { background:var(--green); color:#fff; }
+.task-btn-approve:hover { opacity:.9; }
+.task-btn-reject  { background:var(--card); border:1px solid var(--border2); color:var(--red); }
+.task-btn-reject:hover  { background:rgba(255,92,92,.1); border-color:var(--red); }
+.task-btn-view    { background:var(--card); border:1px solid var(--border2); color:var(--muted); }
+.task-btn-view:hover    { border-color:var(--blue); color:var(--blue); }
+
+/* New Task Panel */
+.new-task-panel {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden; position:sticky; top:24px;
+}
+.panel-header {
+  padding:14px 18px; border-bottom:1px solid var(--border);
+  font-size:14px; font-weight:700;
+}
+.panel-body { padding:18px; }
+
+.field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.field:last-of-type { margin-bottom:0; }
+label { font-size:12px; font-weight:600; color:var(--muted); }
+.req  { color:var(--accent); }
+input, select, textarea {
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:13px;
+  padding:10px 12px; width:100%; outline:none; transition:border-color .18s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--accent); box-shadow:0 0 0 3px rgba(230,48,48,.1);
+}
+input::placeholder, textarea::placeholder { color:var(--muted); opacity:.6; }
+select option { background:var(--bg2); }
+textarea { resize:vertical; min-height:72px; }
+
+/* Type selector */
+.type-selector { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.type-opt { position:relative; }
+.type-opt input { display:none; }
+.type-opt label {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:12px 8px; border-radius:var(--r-sm);
+  border:1px solid var(--border2); cursor:pointer;
+  font-size:12px; font-weight:600; color:var(--muted);
+  transition:all .18s; text-align:center;
+}
+.type-opt label span { font-size:22px; }
+.type-opt input:checked + label {
+  border-color:var(--accent); color:var(--accent2);
+  background:rgba(230,48,48,.08);
+}
+
+/* Empty state */
+.empty-state {
+  text-align:center; padding:60px 20px;
+  color:var(--muted); font-size:13px;
+}
+.empty-state .icon { font-size:40px; margin-bottom:12px; opacity:.5; }
+
+/* History list */
+.history-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 0; border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.history-item:last-child { border-bottom:none; }
+.h-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.h-info { flex:1; }
+.h-title { font-weight:600; }
+.h-sub   { color:var(--muted); font-size:11px; margin-top:1px; }
+.h-time  { font-size:10px; color:var(--muted); white-space:nowrap; }
+
+/* Spinner */
+.spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin    { to { transform:rotate(360deg); } }
+@keyframes fadeUp  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+</style>
+<script>
+(function(){
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (!s) { window.location.href = "login.html"; return; }
+  try {
+    const session = JSON.parse(s);
+    if (new Date(session.expires_at) < new Date()) {
+      localStorage.removeItem("ztm_session");
+      sessionStorage.removeItem("ztm_session");
+      window.location.href = "login.html";
+    }
+  } catch(e) { window.location.href = "login.html"; }
+})();
+</script>
+</head>
+<body>
+
+<!-- Sidebar -->
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║       ZTM UNIFIED SIDEBAR    ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-img">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAyAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAgMEAQf/xAAwEAACAQMDAgMGBwAAAAAAAAABAgMABBEFEiExBhNBURQiMmFxgZGhBxUjQlL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+qaUpQClKUApSlAKi9R1i10xF8z5pZDiKCMZeQ+wH9TwKqdb1+6e6bTdHiSe9UZlkc/JbJ7se59h9ya5ttBt7d/tWqXsl/fN8xuG4jT2UcD9eT70BbprtzdRaeLWCS4lJBdIFLFAfXA6VLaJrjapeXFnLbmCeBVYrlXUg9ipq50bRrLRbVoLJCN5zJI7bmkbuWPc1SdnbOW51G0ub5D9pJI0cIG5FyeA3fNAblKUoBSlKAUpSgFKUoBSlKAUp0oABkgDrWc9xBbrl5o09Mk4rA1fUW0yy81ImlkJCRqvdj0H17ms9H05bRTcXG2a8k+aWT3PoPoKAstO1CG/hMkW5SpxIjDBU+Rqn7SdQ8S4bSZmxFMhMXrIT/5PerihVFSMBVUYAHQVm6jp8Wo2hglbaQQyOOqMOjCgF9WBqeo/ZkijhTzLqY4jU9APVj6CvG3luFu3sLqTzZUXfHLjHmJ3yPUdKgdGJlvdWndifMugAfYKAKA3X0GW8c3Gr3z3D9fLztiX2AHH7Ct+0sbWxjKWlukIPXaOT7nqapqUApSlAKUpQClKUAqLudBgnvPtEcs0Ld2jjba59z1/etm/urewtJLq6lEcMY3MxrlP8AiHqZvLkWEL5gt/mk9GkI6fYf3oC9k0W3MfkQSSW8Hqke3J9yRzWFH2asFxuuLpvcs37VzWlAW+naFpumPvtrUCT/ADud8n7nNWbwxSoyuiupGCrDINVulAb2q6XaavZtaXiF4y24bThkPqD3rMtLZLO0itY2ZliXarOcsR65NZqUApSlAKUpQH//2Q==" alt="ZTM">
+    </div>
+    <div>
+      <div class="logo-text">ZTM</div>
+      <div class="logo-sub">منظومة الشحن</div>
+    </div>
+  </div>
+
+  <a class="nav-item "  href="norus-dashboard.html">📊 لوحة التحكم</a>
+  <a class="nav-item "  href="add-order.html">➕ إضافة طلب جديد</a>
+
+  <div class="nav-lbl">تتبع الطلبات</div>
+  <a class="nav-item " href="tracking.html?status=sent_from_store">📤 مرسلة من المتجر <span class="nav-badge" id="nb-sent">0</span></a>
+  <a class="nav-item " href="tracking.html?status=saved">📦 محفوظة</a>
+  <a class="nav-item " href="tracking.html?status=in_company">🏢 في الشركة</a>
+  <a class="nav-item " href="tracking.html?status=with_agent">🚚 مع المندوب <span class="nav-badge" style="background:#f5a623" id="nb-agent">0</span></a>
+  <a class="nav-item " href="tracking.html?status=delivered">✅ تم التسليم</a>
+
+  <div class="nav-lbl">الفروع</div>
+  <a class="nav-item " href="tracking.html?status=to_branch">🛣️ بالطريق إلى الفرع</a>
+  <a class="nav-item " href="tracking.html?status=arrived_branch">🏪 وصلت إلى الفرع</a>
+
+  <div class="nav-lbl">المرتجعات</div>
+  <a class="nav-item " href="tracking.html?status=return_agent">↩️ راجع لدى المندوب</a>
+  <a class="nav-item " href="tracking.html?status=return_warehouse">🗃️ مخزن المرتجعات <span class="nav-badge" style="background:#a78bfa" id="nb-warehouse">0</span></a>
+  <a class="nav-item " href="tracking.html?status=return_arrived_branch">↩️ مرتجع وصل للفرع</a>
+  <a class="nav-item " href="tracking.html?status=return_to_company">🚛 مرتجع بالطريق للشركة</a>
+  <a class="nav-item " href="tracking.html?status=return_in_company">🏢 راجع في الشركة</a>
+  <a class="nav-item " href="tracking.html?status=return_received">♻️ مرتجعات مستلمة</a>
+
+  <div class="nav-lbl">استثنائية</div>
+  <a class="nav-item " href="tracking.html?status=postponed">⏸ مؤجلة مع المندوب</a>
+  <a class="nav-item " href="tracking.html?status=resent">🔁 معاد إرسالها</a>
+  <a class="nav-item " href="tracking.html?status=null_order">❌ طلب معدوم</a>
+
+  <div class="nav-lbl">الأدوات</div>
+  <a class="nav-item active"    href="tasks.html">📋 المهمات <span class="nav-badge" id="nb-tasks">0</span></a>
+  <a class="nav-item " href="stickers.html">🏷️ الملصقات <span class="nav-badge" style="background:#f5a623" id="nb-stickers">0</span></a>
+
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.07);margin-top:auto;flex-shrink:0;">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;" id="session-user">مرحباً</div>
+    <button onclick="logout()" style="width:100%;padding:8px;background:rgba(255,92,92,.1);border:1px solid rgba(255,92,92,.2);border-radius:8px;color:#ff5c5c;font-family:Cairo,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;" onmouseover="this.style.background='rgba(255,92,92,.2)'" onmouseout="this.style.background='rgba(255,92,92,.1)'">
+      🚪 تسجيل الخروج
+    </button>
+  </div>
+</aside>
+<script>
+function logout() {
+  localStorage.removeItem("ztm_session");
+  sessionStorage.removeItem("ztm_session");
+  window.location.href = "login.html";
+}
+// عرض اسم المستخدم
+try {
+  const s = localStorage.getItem("ztm_session") || sessionStorage.getItem("ztm_session");
+  if (s) {
+    const session = JSON.parse(s);
+    const el = document.getElementById("session-user");
+    if (el) el.textContent = "مرحباً، " + (session.username || "مستخدم");
+  }
+} catch(e){}
+</script>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="breadcrumb">
+      <a href="norus-dashboard.html">لوحة التحكم</a>
+      <span style="opacity:.4">›</span>
+      <span class="cur">المهمات</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" onclick="refreshTasks()">🔄 تحديث</button>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card c-amber">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:var(--amber-bg,rgba(245,166,35,.1))">⏳</div>
+        <span style="font-size:10px;color:var(--amber)">قيد المراجعة</span>
+      </div>
+      <div class="kpi-val" style="color:var(--amber)" id="kpi-pending">3</div>
+      <div class="kpi-lbl">مهام معلقة</div>
+    </div>
+    <div class="kpi-card c-green">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:rgba(34,201,122,.1)">✅</div>
+        <span style="font-size:10px;color:var(--green)">هذا الشهر</span>
+      </div>
+      <div class="kpi-val" style="color:var(--green)" id="kpi-approved">12</div>
+      <div class="kpi-lbl">مهام مكتملة</div>
+    </div>
+    <div class="kpi-card c-red">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:rgba(255,92,92,.1)">💸</div>
+        <span style="font-size:10px;color:var(--red)">قيد التحصيل</span>
+      </div>
+      <div class="kpi-val" style="color:var(--red)" id="kpi-amount">5,240</div>
+      <div class="kpi-lbl">مبلغ طلبات السحب (د.ل)</div>
+    </div>
+    <div class="kpi-card c-blue">
+      <div class="kpi-header">
+        <div class="kpi-icon" style="background:rgba(61,127,255,.1)">↩️</div>
+        <span style="font-size:10px;color:var(--blue)">نشطة</span>
+      </div>
+      <div class="kpi-val" style="color:var(--blue)" id="kpi-returns">2</div>
+      <div class="kpi-lbl">طلبات استرجاع طرود</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="task-tabs">
+    <div class="task-tab active" id="tabAll" onclick="switchTaskTab('all')">
+      📋 جميع المهام <span class="tab-badge" id="badge-all">3</span>
+    </div>
+    <div class="task-tab" id="tabWithdrawal" onclick="switchTaskTab('withdrawal')">
+      💸 طلبات السحب <span class="tab-badge" id="badge-withdrawal">1</span>
+    </div>
+    <div class="task-tab" id="tabReturn" onclick="switchTaskTab('return_request')">
+      ↩️ استرجاع طرود <span class="tab-badge" id="badge-return_request">2</span>
+    </div>
+    <div class="task-tab" id="tabDone" onclick="switchTaskTab('done')">
+      ✅ مكتملة
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+
+    <!-- Task List -->
+    <div>
+      <div class="task-list" id="taskList"></div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="icon">📭</div>
+        لا توجد مهام في هذا القسم
+      </div>
+    </div>
+
+    <!-- New Task + History -->
+    <div>
+
+      <!-- New Task Form -->
+      <div class="new-task-panel" style="margin-bottom:16px;">
+        <div class="panel-header">➕ طلب جديد</div>
+        <div class="panel-body">
+
+          <div class="type-selector">
+            <div class="type-opt">
+              <input type="radio" name="taskType" id="typeWithdrawal" value="withdrawal" checked onchange="toggleTaskForm()">
+              <label for="typeWithdrawal">
+                <span>💸</span>
+                سحب مالي
+              </label>
+            </div>
+            <div class="type-opt">
+              <input type="radio" name="taskType" id="typeReturn" value="return_request" onchange="toggleTaskForm()">
+              <label for="typeReturn">
+                <span>↩️</span>
+                استرجاع طرد
+              </label>
+            </div>
+          </div>
+
+          <!-- Withdrawal Fields -->
+          <div id="withdrawalFields">
+            <div class="field">
+              <label>المبلغ المطلوب (د.ل) <span class="req">*</span></label>
+              <input type="number" id="withdrawAmount" placeholder="مثال: 2000" min="1" step="0.5">
+            </div>
+            <div class="field">
+              <label>طريقة الاستلام</label>
+              <select id="withdrawMethod">
+                <option>تحويل بنكي</option>
+                <option>محفظة إلكترونية</option>
+                <option>استلام نقدي</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>ملاحظات</label>
+              <textarea id="withdrawNote" placeholder="أي تفاصيل إضافية..."></textarea>
+            </div>
+          </div>
+
+          <!-- Return Request Fields -->
+          <div id="returnFields" style="display:none;">
+            <div class="field">
+              <label>كود الطرد أو الباركود <span class="req">*</span></label>
+              <input type="text" id="returnCode" placeholder="ZTM-48210">
+            </div>
+            <div class="field">
+              <label>سبب طلب الاسترجاع <span class="req">*</span></label>
+              <select id="returnReason">
+                <option>العميل طلب الإلغاء</option>
+                <option>منتج تالف</option>
+                <option>بيانات خاطئة</option>
+                <option>تأخر التوصيل</option>
+                <option>سبب آخر</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>ملاحظات إضافية</label>
+              <textarea id="returnNote" placeholder="تفاصيل الطلب..."></textarea>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px;" id="submitTaskBtn" onclick="submitTask()">
+            <span id="submitTaskText">إرسال الطلب ←</span>
+            <div class="spinner" id="taskSpinner" style="display:none;"></div>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="new-task-panel">
+        <div class="panel-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>سجل الأنشطة</span>
+          <span style="font-size:11px;color:var(--muted)">آخر 10 أحداث</span>
+        </div>
+        <div class="panel-body" style="padding:12px 18px;">
+          <div id="historyList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════
+//  DATA
+// ═══════════════════════════════════
+let tasks = [
+  {
+    id: 1, type: "withdrawal", status: "pending",
+    amount: 2000, method: "تحويل بنكي",
+    note: "راتب الشهر الماضي",
+    created: new Date(Date.now() - 2*24*3600000),
+    order_code: null,
+  },
+  {
+    id: 2, type: "return_request", status: "pending",
+    amount: null, method: null,
+    note: "العميل طلب الإلغاء بسبب خطأ في البيانات",
+    created: new Date(Date.now() - 1*24*3600000),
+    order_code: "ZTM-48215",
+    reason: "بيانات خاطئة",
+  },
+  {
+    id: 3, type: "return_request", status: "pending",
+    amount: null, method: null,
+    note: "المنتج وصل تالفاً",
+    created: new Date(Date.now() - 3600000*5),
+    order_code: "ZTM-48198",
+    reason: "منتج تالف",
+  },
+  {
+    id: 4, type: "withdrawal", status: "approved",
+    amount: 3240, method: "تحويل بنكي",
+    note: "", created: new Date(Date.now() - 5*24*3600000),
+    order_code: null,
+  },
+  {
+    id: 5, type: "return_request", status: "rejected",
+    amount: null, method: null,
+    note: "العميل غير متاح",
+    created: new Date(Date.now() - 4*24*3600000),
+    order_code: "ZTM-48180",
+    reason: "تأخر التوصيل",
+  },
+];
+
+const history = [
+  { type:"approved", msg:"تمت الموافقة على طلب سحب 3,240 د.ل",       time:"منذ 5 أيام",  color:"#22c97a" },
+  { type:"created",  msg:"طلب استرجاع جديد للطرد ZTM-48215",          time:"أمس",         color:"#3d7fff" },
+  { type:"created",  msg:"طلب سحب 2,000 د.ل قيد المراجعة",            time:"منذ يومين",   color:"#f5a623" },
+  { type:"rejected", msg:"رُفض طلب استرجاع الطرد ZTM-48180",          time:"منذ 4 أيام",  color:"#ff5c5c" },
+  { type:"created",  msg:"طلب استرجاع جديد للطرد ZTM-48198",          time:"منذ 5 ساعات", color:"#3d7fff" },
+];
+
+let currentTab = "all";
+let taskIdCounter = 6;
+
+// ═══════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════
+function renderTasks() {
+  const list  = document.getElementById("taskList");
+  const empty = document.getElementById("emptyState");
+
+  let filtered = tasks;
+  if (currentTab === "withdrawal")     filtered = tasks.filter(t => t.type === "withdrawal"    && t.status === "pending");
+  if (currentTab === "return_request") filtered = tasks.filter(t => t.type === "return_request"&& t.status === "pending");
+  if (currentTab === "done")           filtered = tasks.filter(t => t.status !== "pending");
+  if (currentTab === "all")            filtered = tasks.filter(t => t.status === "pending");
+
+  if (filtered.length === 0) {
+    list.innerHTML = ""; empty.style.display = "block"; return;
+  }
+  empty.style.display = "none";
+
+  list.innerHTML = filtered.map((t, idx) => taskCard(t, idx)).join("");
+  updateBadges();
+  updateKPIs();
+}
+
+function taskCard(t, idx) {
+  const isWithdrawal = t.type === "withdrawal";
+  const isPending    = t.status === "pending";
+
+  const statusMap = {
+    pending:  { label:"قيد المراجعة",  color:"var(--amber)",  bg:"rgba(245,166,35,.12)"  },
+    approved: { label:"مكتمل / موافق", color:"var(--green)",  bg:"rgba(34,201,122,.12)"  },
+    rejected: { label:"مرفوض",         color:"var(--red)",    bg:"rgba(255,92,92,.12)"   },
+  };
+  const st = statusMap[t.status];
+  const dateStr = t.created.toLocaleDateString("ar-LY",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+
+  const actions = isPending ? `
+    <button class="task-btn task-btn-approve" onclick="approveTask(${t.id})">✅ موافقة</button>
+    <button class="task-btn task-btn-reject"  onclick="rejectTask(${t.id})">❌ رفض</button>
+    <button class="task-btn task-btn-view"    onclick="viewTask(${t.id})">تفاصيل</button>
+  ` : `<button class="task-btn task-btn-view" onclick="viewTask(${t.id})">عرض التفاصيل</button>`;
+
+  return `
+  <div class="task-card" style="animation-delay:${idx * 0.05}s">
+    <div class="task-card-header">
+      <div class="task-type-icon" style="background:${isWithdrawal ? "rgba(34,201,122,.1)" : "rgba(61,127,255,.1)"}">
+        ${isWithdrawal ? "💸" : "↩️"}
+      </div>
+      <div class="task-info">
+        <div class="task-title">${isWithdrawal ? "طلب سحب مالي" : "طلب استرجاع طرد"}</div>
+        <div class="task-sub">${dateStr} ${t.order_code ? "· " + t.order_code : ""}</div>
+      </div>
+      <span class="task-status-badge" style="background:${st.bg};color:${st.color}">${st.label}</span>
+    </div>
+    <div class="task-card-body">
+      <div class="detail-grid">
+        ${isWithdrawal ? `
+          <div class="detail-item">
+            <div class="detail-label">المبلغ المطلوب</div>
+            <div class="detail-val" style="color:var(--green)">${Number(t.amount).toLocaleString()} د.ل</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">طريقة الاستلام</div>
+            <div class="detail-val">${t.method}</div>
+          </div>
+        ` : `
+          <div class="detail-item">
+            <div class="detail-label">كود الطرد</div>
+            <div class="detail-val" style="color:var(--blue);font-family:monospace">${t.order_code}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">سبب الاسترجاع</div>
+            <div class="detail-val">${t.reason || "—"}</div>
+          </div>
+        `}
+      </div>
+      ${t.note ? `<div style="font-size:12px;color:var(--muted);background:var(--bg3);border-radius:6px;padding:8px 10px;margin-bottom:12px">📌 ${t.note}</div>` : ""}
+      <div class="task-actions">${actions}</div>
+    </div>
+  </div>`;
+}
+
+function renderHistory() {
+  document.getElementById("historyList").innerHTML = history.map(h => `
+    <div class="history-item">
+      <div class="h-dot" style="background:${h.color}"></div>
+      <div class="h-info">
+        <div class="h-title">${h.msg}</div>
+      </div>
+      <div class="h-time">${h.time}</div>
+    </div>
+  `).join("");
+}
+
+// ═══════════════════════════════════
+//  BADGES & KPIs
+// ═══════════════════════════════════
+function updateBadges() {
+  const pending    = tasks.filter(t => t.status === "pending");
+  const withdrawal = pending.filter(t => t.type === "withdrawal");
+  const returnReq  = pending.filter(t => t.type === "return_request");
+  document.getElementById("badge-all").textContent        = pending.length;
+  document.getElementById("badge-withdrawal").textContent = withdrawal.length;
+  document.getElementById("badge-return_request").textContent = returnReq.length;
+}
+
+function updateKPIs() {
+  const pending  = tasks.filter(t => t.status === "pending");
+  const approved = tasks.filter(t => t.status === "approved");
+  const wAmount  = pending.filter(t => t.type === "withdrawal").reduce((s,t) => s + (t.amount||0), 0);
+  const retCount = pending.filter(t => t.type === "return_request").length;
+  document.getElementById("kpi-pending").textContent  = pending.length;
+  document.getElementById("kpi-approved").textContent = approved.length;
+  document.getElementById("kpi-amount").textContent   = wAmount.toLocaleString();
+  document.getElementById("kpi-returns").textContent  = retCount;
+}
+
+// ═══════════════════════════════════
+//  TAB SWITCH
+// ═══════════════════════════════════
+function switchTaskTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".task-tab").forEach(t => t.classList.remove("active"));
+  const tabIds = { all:"tabAll", withdrawal:"tabWithdrawal", return_request:"tabReturn", done:"tabDone" };
+  document.getElementById(tabIds[tab])?.classList.add("active");
+  renderTasks();
+}
+
+// ═══════════════════════════════════
+//  FORM
+// ═══════════════════════════════════
+function toggleTaskForm() {
+  const type = document.querySelector('input[name="taskType"]:checked').value;
+  document.getElementById("withdrawalFields").style.display = type === "withdrawal"     ? "block" : "none";
+  document.getElementById("returnFields").style.display     = type === "return_request" ? "block" : "none";
+}
+
+async function submitTask() {
+  const type = document.querySelector('input[name="taskType"]:checked').value;
+
+  if (type === "withdrawal") {
+    const amount = document.getElementById("withdrawAmount").value.trim();
+    if (!amount) { showToast("يرجى إدخال المبلغ المطلوب", "error"); return; }
+    const newTask = {
+      id: taskIdCounter++, type: "withdrawal", status: "pending",
+      amount: parseFloat(amount),
+      method: document.getElementById("withdrawMethod").value,
+      note:   document.getElementById("withdrawNote").value.trim(),
+      created: new Date(), order_code: null,
+    };
+    setSubmitLoading(true);
+    await delay(800);
+    tasks.unshift(newTask);
+    history.unshift({ type:"created", msg:`طلب سحب جديد ${parseFloat(amount).toLocaleString()} د.ل`, time:"الآن", color:"#f5a623" });
+    document.getElementById("withdrawAmount").value = "";
+    document.getElementById("withdrawNote").value   = "";
+    setSubmitLoading(false);
+    showToast("✅ تم إرسال طلب السحب بنجاح");
+
+  } else {
+    const code   = document.getElementById("returnCode").value.trim();
+    const reason = document.getElementById("returnReason").value;
+    if (!code) { showToast("يرجى إدخال كود الطرد", "error"); return; }
+    const newTask = {
+      id: taskIdCounter++, type: "return_request", status: "pending",
+      amount: null, method: null,
+      note:   document.getElementById("returnNote").value.trim(),
+      reason, created: new Date(), order_code: code,
+    };
+    setSubmitLoading(true);
+    await delay(800);
+    tasks.unshift(newTask);
+    history.unshift({ type:"created", msg:`طلب استرجاع جديد للطرد ${code}`, time:"الآن", color:"#3d7fff" });
+    document.getElementById("returnCode").value = "";
+    document.getElementById("returnNote").value = "";
+    setSubmitLoading(false);
+    showToast("✅ تم إرسال طلب الاسترجاع بنجاح");
+  }
+
+  renderTasks();
+  renderHistory();
+}
+
+// ═══════════════════════════════════
+//  TASK ACTIONS
+// ═══════════════════════════════════
+function approveTask(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.status = "approved";
+  history.unshift({
+    type:"approved",
+    msg: t.type === "withdrawal" ? `تمت الموافقة على طلب سحب ${Number(t.amount).toLocaleString()} د.ل` : `تمت الموافقة على استرجاع ${t.order_code}`,
+    time:"الآن", color:"#22c97a",
+  });
+  renderTasks(); renderHistory();
+  showToast("✅ تمت الموافقة على المهمة");
+}
+
+function rejectTask(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.status = "rejected";
+  history.unshift({
+    type:"rejected",
+    msg: `تم رفض ${t.type === "withdrawal" ? "طلب السحب" : "طلب الاسترجاع " + t.order_code}`,
+    time:"الآن", color:"#ff5c5c",
+  });
+  renderTasks(); renderHistory();
+  showToast("تم رفض المهمة", "error");
+}
+
+function viewTask(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  const isW = t.type === "withdrawal";
+  const details = isW
+    ? `المبلغ: ${Number(t.amount).toLocaleString()} د.ل\nالطريقة: ${t.method}\nالملاحظات: ${t.note || "لا يوجد"}`
+    : `الطرد: ${t.order_code}\nالسبب: ${t.reason}\nالملاحظات: ${t.note || "لا يوجد"}`;
+  alert(`${isW ? "💸 طلب سحب مالي" : "↩️ طلب استرجاع طرد"}\n\n${details}\n\nالتاريخ: ${t.created.toLocaleDateString("ar-LY")}`);
+}
+
+// ═══════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════
+function setSubmitLoading(on) {
+  document.getElementById("taskSpinner").style.display = on ? "inline-block" : "none";
+  document.getElementById("submitTaskText").textContent = on ? "جارٍ الإرسال..." : "إرسال الطلب ←";
+  document.getElementById("submitTaskBtn").disabled = on;
+}
+
+function refreshTasks() {
+  showToast("🔄 جارٍ التحديث...", "info");
+  setTimeout(() => { renderTasks(); showToast("✅ تم التحديث"); }, 800);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+let toastTimer;
+function showToast(msg, type="success") {
+  let t = document.getElementById("globalToast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "globalToast";
+    t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:var(--card);border:1px solid var(--border2);border-radius:12px;
+      padding:12px 20px;font-size:13px;font-weight:500;z-index:999;
+      transition:transform .3s cubic-bezier(.4,0,.2,1);font-family:Cairo,sans-serif;
+      color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.4);min-width:260px;text-align:center;`;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.borderColor = type==="error" ? "var(--red)" : type==="info" ? "var(--blue)" : "var(--green)";
+  t.style.transform = "translateX(-50%) translateY(0)";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.transform = "translateX(-50%) translateY(80px)"; }, 3500);
+}
+
+// ═══════════════════════════════════
+//  INIT
+// ═══════════════════════════════════
+renderTasks();
+renderHistory();
+updateKPIs();
+</script>
+
+<!-- ZTM Nav Counters -->
+<script>
+(function(){
+  const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+  const CLIENT_CODE = "3729";
+  const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+
+  // تحديث العدادات من localStorage (مشترك بين الصفحات)
+  function loadCounters() {
+    try {
+      const c = JSON.parse(localStorage.getItem("ztm_counters") || "{}");
+      if (document.getElementById("nb-sent"))      document.getElementById("nb-sent").textContent      = c.sent      || 0;
+      if (document.getElementById("nb-agent"))     document.getElementById("nb-agent").textContent     = c.agent     || 0;
+      if (document.getElementById("nb-warehouse")) document.getElementById("nb-warehouse").textContent = c.warehouse || 0;
+      if (document.getElementById("nb-tasks"))     document.getElementById("nb-tasks").textContent     = c.tasks     || 0;
+      if (document.getElementById("nb-stickers"))  document.getElementById("nb-stickers").textContent  = c.stickers  || 0;
+      // إخفاء الصفري
+      ["nb-sent","nb-agent","nb-warehouse","nb-tasks","nb-stickers"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.textContent === "0") el.style.display = "none";
+        else if (el) el.style.display = "inline-block";
+      });
+    } catch(e){}
+  }
+
+  // فتح الصفحة الصحيحة مع الحالة المطلوبة
+  document.querySelectorAll(".sidebar a[href^='tracking.html']").forEach(a => {
+    a.addEventListener("click", function(e) {
+      const url    = new URL(this.href, window.location.href);
+      const status = url.searchParams.get("status");
+      if (status && window.switchTab) {
+        e.preventDefault();
+        if (window.location.pathname.endsWith("tracking.html")) {
+          window.switchTab(status);
+        } else {
+          window.location.href = "tracking.html?status=" + status;
+        }
+      }
+    });
+  });
+
+  // تطبيق الحالة من URL عند فتح tracking.html
+  if (window.location.pathname.endsWith("tracking.html")) {
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");
+      if (status && window.switchTab) {
+        setTimeout(() => window.switchTab(status), 100);
+      }
+    });
+  }
+
+  loadCounters();
+  // تحديث كل 60 ثانية
+  setInterval(loadCounters, 60000);
+})();
+</script>
+
+</body>
+</html>
