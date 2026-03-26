@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZTM — صفحات التتبع</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0b0f1a;
+  --bg2:      #111827;
+  --bg3:      #1a2235;
+  --card:     #141c2e;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --text:     #e8edf5;
+  --muted:    #7a8aa0;
+  --accent:   #e63030;
+  --accent2:  #ff4f4f;
+  --green:    #22c97a;
+  --red:      #ff5c5c;
+  --amber:    #f5a623;
+  --purple:   #a78bfa;
+  --teal:     #2dd4bf;
+  --blue:     #3d7fff;
+  --r:        14px;
+  --r-sm:     8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Cairo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position:fixed; right:0; top:0; bottom:0; width:220px;
+  background:var(--card); border-left:1px solid var(--border);
+  display:flex; flex-direction:column; z-index:100; overflow-y:auto;
+}
+.logo {
+  padding:18px 16px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+.logo-img { background:#fff; border-radius:8px; padding:3px 7px; height:34px; display:flex; align-items:center; }
+.logo-img img { height:24px; width:auto; }
+.logo-text { font-size:14px; font-weight:700; }
+.logo-sub  { font-size:10px; color:var(--muted); }
+.nav-lbl   { font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.8px; padding:7px 16px 3px; margin-top:4px; }
+.nav-item  {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 16px; font-size:12px; font-weight:500;
+  color:var(--muted); cursor:pointer; text-decoration:none;
+  transition:all .15s; position:relative;
+}
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,.04); }
+.nav-item.active { color:var(--accent2); background:rgba(230,48,48,.1); }
+.nav-item.active::before {
+  content:''; position:absolute; right:0; top:5px; bottom:5px;
+  width:3px; background:var(--accent); border-radius:2px 0 0 2px;
+}
+.nav-badge {
+  margin-right:auto; background:var(--red); color:#fff;
+  font-size:9px; font-weight:700; padding:1px 5px;
+  border-radius:8px; min-width:16px; text-align:center;
+}
+
+/* ── Main ── */
+.main { margin-right:220px; min-height:100vh; padding:24px 28px; }
+
+/* Topbar */
+.topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+.breadcrumb a { color:var(--muted); text-decoration:none; }
+.breadcrumb a:hover { color:var(--accent2); }
+.breadcrumb .cur { color:var(--text); font-weight:600; }
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:var(--r-sm);
+  font-family:'Cairo',sans-serif; font-size:12px; font-weight:600;
+  cursor:pointer; border:none; transition:all .18s;
+}
+.btn-ghost   { background:var(--card); border:1px solid var(--border2); color:var(--text); }
+.btn-ghost:hover { background:var(--bg3); }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent2); }
+
+/* ── Status Tabs ── */
+.status-tabs {
+  display:flex; gap:6px; flex-wrap:wrap;
+  margin-bottom:20px; padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.tab-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:20px;
+  font-size:11px; font-weight:600; cursor:pointer;
+  border:1px solid var(--border2); background:var(--card);
+  color:var(--muted); transition:all .18s; white-space:nowrap;
+}
+.tab-btn:hover { border-color:var(--border2); color:var(--text); background:var(--bg3); }
+.tab-btn.active { color:#fff; border-color:transparent; }
+.tab-count {
+  font-size:10px; padding:1px 6px; border-radius:8px;
+  background:rgba(255,255,255,.1); font-weight:700;
+}
+
+/* ── Search + Filter Bar ── */
+.filter-bar {
+  display:flex; gap:10px; margin-bottom:20px; align-items:center;
+}
+.search-wrap {
+  flex:1; position:relative;
+}
+.search-icon { position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--muted); pointer-events:none; }
+.search-input {
+  width:100%; background:var(--card); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:13px;
+  padding:10px 36px 10px 12px; outline:none; transition:border-color .18s;
+}
+.search-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(230,48,48,.1); }
+.search-input::placeholder { color:var(--muted); opacity:.6; }
+.filter-select {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:12px;
+  padding:10px 12px; outline:none; cursor:pointer;
+}
+.filter-select option { background:var(--bg2); }
+
+/* ── Stats Row ── */
+.stats-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:12px; margin-bottom:20px;
+}
+.stat-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  transition:border-color .2s;
+}
+.stat-card:hover { border-color:var(--border2); }
+.stat-icon { font-size:20px; }
+.stat-val  { font-size:20px; font-weight:800; font-family:'Tajawal',sans-serif; line-height:1; }
+.stat-lbl  { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* ── Orders Table ── */
+.table-wrap {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); overflow:hidden;
+}
+.table-head-row {
+  padding:14px 18px; display:flex; align-items:center;
+  justify-content:space-between; border-bottom:1px solid var(--border);
+}
+.table-title { font-size:14px; font-weight:700; }
+.table-meta  { font-size:11px; color:var(--muted); }
+
+table { width:100%; border-collapse:collapse; }
+th {
+  font-size:11px; font-weight:600; color:var(--muted);
+  text-align:right; padding:10px 16px;
+  background:var(--bg2); border-bottom:1px solid var(--border);
+}
+td {
+  padding:12px 16px; font-size:12px;
+  border-bottom:1px solid var(--border); vertical-align:middle;
+}
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,.015); }
+.empty-row td {
+  text-align:center; padding:40px;
+  color:var(--muted); font-size:13px;
+}
+
+/* Pills */
+.pill {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:4px 10px; border-radius:20px;
+  font-size:11px; font-weight:600; white-space:nowrap;
+}
+.route-tag {
+  font-size:10px; padding:2px 7px; border-radius:4px; font-weight:600;
+  background:var(--bg3); color:var(--muted); border:1px solid var(--border);
+}
+.tracking-num {
+  font-family:'Tajawal',monospace; font-size:12px;
+  color:var(--blue); font-weight:700; cursor:pointer;
+}
+.tracking-num:hover { color:var(--accent2); }
+
+/* Action buttons */
+.act-btn {
+  background:none; border:1px solid var(--border); border-radius:6px;
+  color:var(--muted); padding:4px 8px; font-size:10px;
+  cursor:pointer; font-family:'Cairo',sans-serif;
+  transition:all .15s; margin-left:4px;
+}
+.act-btn:hover { border-color:var(--accent); color:var(--accent2); }
+.act-btn.danger:hover { border-color:var(--red); color:var(--red); }
+.act-btn.success:hover { border-color:var(--green); color:var(--green); }
+
+/* ── Detail Panel (Slide-in) ── */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.6);
+  z-index:200; opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.overlay.show { opacity:1; pointer-events:all; }
+.detail-panel {
+  position:fixed; left:0; top:0; bottom:0; width:420px;
+  background:var(--card); border-right:1px solid var(--border2);
+  z-index:201; transform:translateX(-100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto; display:flex; flex-direction:column;
+}
+.detail-panel.show { transform:translateX(0); }
+.panel-header {
+  padding:18px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.panel-title { font-size:15px; font-weight:700; }
+.close-btn {
+  background:none; border:none; color:var(--muted);
+  font-size:18px; cursor:pointer; padding:4px 8px;
+  border-radius:6px; transition:all .15s;
+}
+.close-btn:hover { background:var(--bg3); color:var(--text); }
+.panel-body { padding:20px; flex:1; }
+
+/* Timeline */
+.timeline { position:relative; padding-right:20px; }
+.timeline::before {
+  content:''; position:absolute; right:7px; top:8px; bottom:8px;
+  width:2px; background:var(--border2);
+}
+.tl-item {
+  position:relative; margin-bottom:20px; padding-right:24px;
+}
+.tl-dot {
+  position:absolute; right:-13px; top:4px;
+  width:12px; height:12px; border-radius:50%;
+  border:2px solid var(--bg2); flex-shrink:0;
+}
+.tl-dot.active { box-shadow:0 0 0 3px rgba(230,48,48,.3); }
+.tl-label { font-size:13px; font-weight:600; }
+.tl-time  { font-size:11px; color:var(--muted); margin-top:2px; }
+.tl-note  { font-size:11px; color:var(--muted); margin-top:4px; font-style:italic; }
+
+/* Info rows in panel */
+.info-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 0; border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.info-row:last-child { border-bottom:none; }
+.info-key { color:var(--muted); }
+.info-val { font-weight:600; text-align:left; }
+
+/* Pagination */
+.pagination {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 18px; border-top:1px solid var(--border);
+  font-size:12px; color:var(--muted);
+}
+.page-btns { display:flex; gap:6px; }
+.page-btn {
+  padding:5px 10px; border-radius:6px; border:1px solid var(--border2);
+  background:var(--card); color:var(--muted); cursor:pointer;
+  font-size:11px; transition:all .15s; font-family:'Cairo',sans-serif;
+}
+.page-btn:hover { border-color:var(--accent); color:var(--accent2); }
+.page-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* Spinner */
+.spinner {
+  display:inline-block; width:14px; height:14px;
+  border:2px solid rgba(255,255,255,.2);
+  border-top-color:#fff; border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.fade-up { animation:fadeUp .35s ease both; }
+
+/* Resend modal */
+.modal-wrap {
+  position:fixed; inset:0; background:rgba(0,0,0,.7);
+  z-index:300; display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.modal-wrap.show { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:var(--r); padding:24px; width:380px;
+  transform:scale(.95); transition:transform .25s;
+}
+.modal-wrap.show .modal { transform:scale(1); }
+.modal-title { font-size:15px; font-weight:700; margin-bottom:16px; }
+.modal label { font-size:12px; color:var(--muted); display:block; margin-bottom:6px; margin-top:12px; }
+.modal input, .modal select {
+  width:100%; background:var(--bg3); border:1px solid var(--border2);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:13px; padding:9px 12px; outline:none;
+}
+.modal input:focus, .modal select:focus { border-color:var(--accent); }
+.modal-actions { display:flex; gap:8px; margin-top:20px; }
+.modal-actions .btn { flex:1; justify-content:center; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-img">
+      <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/wAARCAAyAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAgMEAQf/xAAwEAACAQMDAgMGBwAAAAAAAAABAgMABBEFEiExBhNBURQiMmFxgZGhBxUjQlL/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A+qaUpQClKUApSlAKi9R1i10xF8z5pZDiKCMZeQ+wH9TwKqdb1+6e6bTdHiSe9UZlkc/JbJ7se59h9ya5ttBt7d/tWqXsl/fN8xuG4jT2UcD9eT70BbprtzdRaeLWCS4lJBdIFLFAfXA6VLaJrjapeXFnLbmCeBVYrlXUg9ipq50bRrLRbVoLJCN5zJI7bmkbuWPc1SdnbOW51G0ub5D9pJI0cIG5FyeA3fNAblKUoBSlKAUpSgFKUoBSlKAUp0oABkgDrWc9xBbrl5o09Mk4rA1fUW0yy81ImlkJCRqvdj0H17ms9H05bRTcXG2a8k+aWT3PoPoKAstO1CG/hMkW5SpxIjDBU+Rqn7SdQ8S4bSZmxFMhMXrIT/5PerihVFSMBVUYAHQVm6jp8Wo2hglbaQQyOOqMOjCgF9WBqeo/ZkijhTzLqY4jU9APVj6CvG3luFu3sLqTzZUXfHLjHmJ3yPUdKgdGJlvdWndifMugAfYKAKA3X0GW8c3Gr3z3D9fLztiX2AHH7Ct+0sbWxjKWlukIPXaOT7nqapqUApSlAKUpQClKUAqLudBgnvPtEcs0Ld2jjba59z1/etm/urewtJLq6lEcMY3MxrlP8AiHqZvLkWEL5gt/mk9GkI6fYf3oC9k0W3MfkQSSW8Hqke3J9yRzWFH2asFxuuLpvcs37VzWlAW+naFpumPvtrUCT/ADud8n7nNWbwxSoyuiupGCrDINVulAb2q6XaavZtaXiF4y24bThkPqD3rMtLZLO0itY2ZliXarOcsR65NZqUApSlAKUpQH//2Q==" alt="ZTM">
+    </div>
+    <div>
+      <div class="logo-text">ZTM</div>
+      <div class="logo-sub">منظومة الشحن</div>
+    </div>
+  </div>
+
+  <a class="nav-item" href="norus-dashboard.html">📊 لوحة التحكم</a>
+  <a class="nav-item" href="add-order.html">➕ إضافة طلب جديد</a>
+
+  <div class="nav-lbl">تتبع الطلبات</div>
+  <a class="nav-item" href="#" onclick="switchTab('sent_from_store')">📤 مرسلة من المتجر <span class="nav-badge" id="nb-sent_from_store">0</span></a>
+  <a class="nav-item" href="#" onclick="switchTab('saved')">📦 محفوظة <span class="nav-badge" id="nb-saved" style="display:none">0</span></a>
+  <a class="nav-item" href="#" onclick="switchTab('in_company')">🏢 في الشركة <span class="nav-badge" id="nb-in_company" style="display:none">0</span></a>
+  <a class="nav-item" href="#" onclick="switchTab('with_agent')">🚚 مع المندوب <span class="nav-badge" id="nb-with_agent" style="background:var(--amber)">0</span></a>
+  <a class="nav-item" href="#" onclick="switchTab('delivered')">✅ تم التسليم</a>
+
+  <div class="nav-lbl">الفروع</div>
+  <a class="nav-item" href="#" onclick="switchTab('to_branch')">🛣️ بالطريق إلى الفرع</a>
+  <a class="nav-item" href="#" onclick="switchTab('arrived_branch')">🏪 وصلت إلى الفرع</a>
+
+  <div class="nav-lbl">المرتجعات</div>
+  <a class="nav-item" href="#" onclick="switchTab('return_agent')">↩️ راجع لدى المندوب</a>
+  <a class="nav-item" href="#" onclick="switchTab('return_warehouse')">🗃️ مخزن المرتجعات <span class="nav-badge" style="background:var(--purple)" id="nb-return_warehouse">0</span></a>
+  <a class="nav-item" href="#" onclick="switchTab('return_arrived_branch')">↩️ مرتجع وصل للفرع</a>
+  <a class="nav-item" href="#" onclick="switchTab('return_to_company')">🚛 مرتجع بالطريق للشركة</a>
+  <a class="nav-item" href="#" onclick="switchTab('return_in_company')">🏢 راجع في الشركة</a>
+  <a class="nav-item" href="#" onclick="switchTab('return_received')">♻️ مرتجعات مستلمة</a>
+
+  <div class="nav-lbl">استثنائية</div>
+  <a class="nav-item" href="#" onclick="switchTab('postponed')">⏸ مؤجلة مع المندوب</a>
+  <a class="nav-item" href="#" onclick="switchTab('resent')">🔁 معاد إرسالها</a>
+  <a class="nav-item" href="#" onclick="switchTab('null_order')">❌ طلب معدوم</a>
+
+  <div class="nav-lbl">الأدوات</div>
+  <a class="nav-item" href="#">📋 المهمات</a>
+  <a class="nav-item" href="#">🏷️ الملصقات</a>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="breadcrumb">
+      <a href="norus-dashboard.html">لوحة التحكم</a>
+      <span style="opacity:.4">›</span>
+      <span class="cur" id="pageTitle">تتبع الطلبات</span>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" onclick="refreshOrders()">🔄 تحديث</button>
+      <button class="btn btn-primary" onclick="location.href='add-order.html'">➕ طلب جديد</button>
+    </div>
+  </div>
+
+  <!-- Status Tabs -->
+  <div class="status-tabs" id="statusTabs"></div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card fade-up">
+      <span class="stat-icon">📦</span>
+      <div><div class="stat-val" id="st-total" style="color:var(--blue)">—</div><div class="stat-lbl">إجمالي هذه الحالة</div></div>
+    </div>
+    <div class="stat-card fade-up" style="animation-delay:.05s">
+      <span class="stat-icon">✅</span>
+      <div><div class="stat-val" id="st-delivered" style="color:var(--green)">—</div><div class="stat-lbl">تم التسليم اليوم</div></div>
+    </div>
+    <div class="stat-card fade-up" style="animation-delay:.1s">
+      <span class="stat-icon">↩️</span>
+      <div><div class="stat-val" id="st-returned" style="color:var(--red)">—</div><div class="stat-lbl">مرتجعات اليوم</div></div>
+    </div>
+    <div class="stat-card fade-up" style="animation-delay:.15s">
+      <span class="stat-icon">⏳</span>
+      <div><div class="stat-val" id="st-pending" style="color:var(--amber)">—</div><div class="stat-lbl">قيد المعالجة</div></div>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="بحث برقم التتبع أو اسم العميل أو رقم الهاتف..." oninput="filterOrders()">
+    </div>
+    <select class="filter-select" id="routeFilter" onchange="filterOrders()">
+      <option value="">كل المسارات</option>
+      <option value="city">مسار المدينة</option>
+      <option value="branch">مسار الفروع</option>
+    </select>
+    <select class="filter-select" id="sortFilter" onchange="filterOrders()">
+      <option value="newest">الأحدث أولاً</option>
+      <option value="oldest">الأقدم أولاً</option>
+      <option value="amount">الأعلى مبلغاً</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap fade-up">
+    <div class="table-head-row">
+      <div>
+        <div class="table-title" id="tableTitle">جميع الطلبات</div>
+        <div class="table-meta" id="tableMeta">جارٍ التحميل...</div>
+      </div>
+      <button class="btn btn-ghost" style="font-size:11px;" onclick="exportCSV()">📥 تصدير CSV</button>
+    </div>
+    <div id="tableContainer">
+      <table>
+        <thead>
+          <tr>
+            <th>رقم التتبع</th>
+            <th>المستلم</th>
+            <th>المسار</th>
+            <th>الحالة</th>
+            <th>المبلغ</th>
+            <th>المندوب</th>
+            <th>التاريخ</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody">
+          <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">
+            <div class="spinner" style="margin:0 auto 8px"></div>جارٍ تحميل الطلبات...
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <span id="paginationInfo">—</span>
+      <div class="page-btns" id="pageBtns"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Detail Panel Overlay -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <div class="panel-title" id="panelTitle">تفاصيل الطلب</div>
+    <button class="close-btn" onclick="closePanel()">✕</button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<!-- Resend Modal -->
+<div class="modal-wrap" id="resendModal">
+  <div class="modal">
+    <div class="modal-title">🔁 إعادة إرسال الطلب</div>
+    <div id="resendOrderInfo" style="font-size:12px;color:var(--muted);margin-bottom:4px;"></div>
+    <label>نوع إعادة الإرسال</label>
+    <select id="resendType" onchange="toggleNewCode()">
+      <option value="1">إعادة بنفس البيانات</option>
+      <option value="2">إعادة بطرد جديد</option>
+    </select>
+    <div id="newCodeField" style="display:none;">
+      <label>كود الطرد الجديد</label>
+      <input type="text" id="newOrderCode" placeholder="أدخل كود الطرد الجديد">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeResend()">إلغاء</button>
+      <button class="btn btn-primary" onclick="confirmResend()">تأكيد الإرسال ←</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const BASE_URL    = "https://backoffice.nawris.algoriza.com/external-api";
+const AUTH_KEY    = "2fb86dbe95bd9879b200063a95c1a9c5030f67f7883051c10c07133151499a6d";
+const CLIENT_CODE = "3729";
+
+// ═══════════════════════════════════════════════════════
+//  STATUS DEFINITIONS
+// ═══════════════════════════════════════════════════════
+const STATUSES = {
+  sent_from_store:        { label:"مرسلة من المتجر",         emoji:"📤", color:"#888780", bg:"rgba(136,135,128,.15)", cat:"exception" },
+  saved:                  { label:"محفوظة",                   emoji:"📦", color:"#1D9E75", bg:"rgba(29,158,117,.12)", cat:"delivery"  },
+  in_company:             { label:"في الشركة",                emoji:"🏢", color:"#1D9E75", bg:"rgba(29,158,117,.12)", cat:"delivery"  },
+  to_branch:              { label:"بالطريق إلى الفرع",        emoji:"🛣️", color:"#7F77DD", bg:"rgba(127,119,221,.12)",cat:"branch"    },
+  arrived_branch:         { label:"وصلت إلى الفرع",          emoji:"🏪", color:"#7F77DD", bg:"rgba(127,119,221,.12)",cat:"branch"    },
+  with_agent:             { label:"مع المندوب",               emoji:"🚚", color:"#2dd4bf", bg:"rgba(45,212,191,.12)", cat:"delivery"  },
+  delivered:              { label:"تم التسليم",               emoji:"✅", color:"#22c97a", bg:"rgba(34,201,122,.12)", cat:"delivery"  },
+  return_agent:           { label:"راجع لدى المندوب",         emoji:"↩️", color:"#D85A30", bg:"rgba(216,90,48,.12)",  cat:"return"    },
+  return_warehouse:       { label:"مخزن المرتجعات",          emoji:"🗃️", color:"#D85A30", bg:"rgba(216,90,48,.12)",  cat:"return"    },
+  return_arrived_branch:  { label:"مرتجع وصل للفرع",         emoji:"↩️", color:"#D85A30", bg:"rgba(216,90,48,.12)",  cat:"return"    },
+  return_to_company:      { label:"مرتجع بالطريق للشركة",    emoji:"🚛", color:"#D85A30", bg:"rgba(216,90,48,.12)",  cat:"return"    },
+  return_in_company:      { label:"راجع في الشركة",           emoji:"🏢", color:"#D85A30", bg:"rgba(216,90,48,.12)",  cat:"return"    },
+  return_received:        { label:"مرتجعات تم استلامها",     emoji:"♻️", color:"#888780", bg:"rgba(136,135,128,.15)",cat:"return"    },
+  postponed:              { label:"مؤجلة مع المندوب",        emoji:"⏸",  color:"#f5a623", bg:"rgba(245,166,35,.12)", cat:"exception" },
+  resent:                 { label:"معاد إرسالها",             emoji:"🔁", color:"#a78bfa", bg:"rgba(167,139,250,.12)",cat:"exception" },
+  null_order:             { label:"طلب معدوم",                emoji:"❌", color:"#ff5c5c", bg:"rgba(255,92,92,.12)",  cat:"exception" },
+  all:                    { label:"جميع الطلبات",             emoji:"📋", color:"#3d7fff", bg:"rgba(61,127,255,.12)", cat:"all"       },
+};
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let currentSlug   = "all";
+let allOrders     = [];
+let filteredOrders= [];
+let currentPage   = 1;
+const PAGE_SIZE   = 15;
+let resendTarget  = null;
+
+// ═══════════════════════════════════════════════════════
+//  DEMO DATA GENERATOR
+// ═══════════════════════════════════════════════════════
+const NAMES     = ["أحمد العمري","سارة المطيري","محمد الشهري","نورة القحطاني","فيصل الدوسري","ريم السبيعي","خالد الزهراني","لمياء العتيبي","يوسف الغامدي","هند السلمي"];
+const GOVS      = ["طرابلس","بنغازي","مصراتة","الزاوية","سبها","زليتن","الخمس"];
+const CAPTAINS  = ["علي محمد","عمر يوسف","سامي خالد","رامي أحمد",null,null];
+const SLUGS     = Object.keys(STATUSES).filter(s => s !== "all");
+
+function generateDemoOrders() {
+  const orders = [];
+  for (let i = 1; i <= 120; i++) {
+    const slug    = SLUGS[Math.floor(Math.random() * SLUGS.length)];
+    const name    = NAMES[Math.floor(Math.random() * NAMES.length)];
+    const gov     = GOVS[Math.floor(Math.random() * GOVS.length)];
+    const captain = CAPTAINS[Math.floor(Math.random() * CAPTAINS.length)];
+    const daysAgo = Math.floor(Math.random() * 30);
+    const d       = new Date(); d.setDate(d.getDate() - daysAgo);
+    const route   = ["to_branch","arrived_branch","return_arrived_branch","return_to_company","return_in_company"].includes(slug) ? "branch" : "city";
+    orders.push({
+      id:           i,
+      code:         "ZTM-" + (10000 + i),
+      bar_code:     String(1500000000 + i * 137),
+      status_raw:   STATUSES[slug].label,
+      slug,
+      receiver:     name,
+      phone1:       "091" + Math.floor(1000000 + Math.random()*8999999),
+      government:   gov,
+      area:         "منطقة " + Math.floor(Math.random()*20 + 1),
+      amount:       (Math.floor(Math.random()*200 + 50) * 5),
+      captain:      captain,
+      captain_phone: captain ? "091" + Math.floor(1000000 + Math.random()*8999999) : null,
+      route,
+      date:         d,
+      invoice:      "INV-" + (1000 + i),
+      return_reason: slug.startsWith("return") ? "لم يتم الاستلام" : null,
+    });
+  }
+  return orders;
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT TABS
+// ═══════════════════════════════════════════════════════
+function initTabs() {
+  const container = document.getElementById("statusTabs");
+  // All tab
+  const allTab = document.createElement("button");
+  allTab.className = "tab-btn active";
+  allTab.id = "tab-all";
+  allTab.innerHTML = `📋 جميع الطلبات <span class="tab-count" id="tc-all">0</span>`;
+  allTab.onclick = () => switchTab("all");
+  container.appendChild(allTab);
+
+  // Category groups
+  const groups = [
+    { label:"التوصيل", slugs:["sent_from_store","saved","in_company","with_agent","delivered"] },
+    { label:"الفروع",  slugs:["to_branch","arrived_branch"] },
+    { label:"المرتجعات", slugs:["return_agent","return_warehouse","return_arrived_branch","return_to_company","return_in_company","return_received"] },
+    { label:"استثنائية", slugs:["postponed","resent","null_order"] },
+  ];
+
+  groups.forEach(g => {
+    const sep = document.createElement("span");
+    sep.style.cssText = "font-size:10px;color:var(--muted);align-self:center;padding:0 4px;";
+    sep.textContent = "│";
+    container.appendChild(sep);
+
+    g.slugs.forEach(slug => {
+      const st  = STATUSES[slug];
+      const btn = document.createElement("button");
+      btn.className = "tab-btn";
+      btn.id = "tab-" + slug;
+      btn.innerHTML = `${st.emoji} ${st.label} <span class="tab-count" id="tc-${slug}" style="background:${st.color}22;color:${st.color}">0</span>`;
+      btn.onclick = () => switchTab(slug);
+      container.appendChild(btn);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  SWITCH TAB
+// ═══════════════════════════════════════════════════════
+function switchTab(slug) {
+  currentSlug = slug;
+  currentPage = 1;
+
+  // Update active tab
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  const activeBtn = document.getElementById("tab-" + slug);
+  if (activeBtn) {
+    activeBtn.classList.add("active");
+    const st = STATUSES[slug];
+    activeBtn.style.background = st.bg;
+    activeBtn.style.borderColor = st.color;
+    activeBtn.style.color = st.color;
+  }
+
+  // Update sidebar active
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+
+  const st = STATUSES[slug] || STATUSES.all;
+  document.getElementById("pageTitle").textContent = st.label;
+  document.getElementById("tableTitle").textContent = st.emoji + " " + st.label;
+
+  filterOrders();
+  updateStats();
+}
+
+// ═══════════════════════════════════════════════════════
+//  UPDATE COUNTS
+// ═══════════════════════════════════════════════════════
+function updateCounts() {
+  const tc = document.getElementById("tc-all");
+  if (tc) tc.textContent = allOrders.length;
+
+  SLUGS.forEach(slug => {
+    const count = allOrders.filter(o => o.slug === slug).length;
+    const tc = document.getElementById("tc-" + slug);
+    if (tc) tc.textContent = count;
+
+    // Update nav badges
+    const nb = document.getElementById("nb-" + slug);
+    if (nb) {
+      nb.textContent = count;
+      nb.style.display = count > 0 ? "inline-block" : "none";
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  UPDATE STATS
+// ═══════════════════════════════════════════════════════
+function updateStats() {
+  const base = currentSlug === "all" ? allOrders : allOrders.filter(o => o.slug === currentSlug);
+  document.getElementById("st-total").textContent     = base.length;
+  document.getElementById("st-delivered").textContent = allOrders.filter(o => o.slug === "delivered").length;
+  document.getElementById("st-returned").textContent  = allOrders.filter(o => o.slug.startsWith("return")).length;
+  document.getElementById("st-pending").textContent   = allOrders.filter(o => ["saved","in_company","with_agent","to_branch","arrived_branch"].includes(o.slug)).length;
+}
+
+// ═══════════════════════════════════════════════════════
+//  FILTER ORDERS
+// ═══════════════════════════════════════════════════════
+function filterOrders() {
+  const q      = document.getElementById("searchInput").value.trim().toLowerCase();
+  const route  = document.getElementById("routeFilter").value;
+  const sort   = document.getElementById("sortFilter").value;
+
+  let list = currentSlug === "all" ? [...allOrders] : allOrders.filter(o => o.slug === currentSlug);
+
+  if (q) {
+    list = list.filter(o =>
+      o.code.toLowerCase().includes(q) ||
+      o.receiver.toLowerCase().includes(q) ||
+      o.phone1.includes(q) ||
+      o.invoice.toLowerCase().includes(q)
+    );
+  }
+  if (route) list = list.filter(o => o.route === route);
+
+  if (sort === "oldest")   list.sort((a,b) => a.date - b.date);
+  else if (sort === "amount") list.sort((a,b) => b.amount - a.amount);
+  else list.sort((a,b) => b.date - a.date);
+
+  filteredOrders = list;
+  currentPage = 1;
+  renderTable();
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER TABLE
+// ═══════════════════════════════════════════════════════
+function renderTable() {
+  const tbody    = document.getElementById("ordersBody");
+  const start    = (currentPage - 1) * PAGE_SIZE;
+  const pageData = filteredOrders.slice(start, start + PAGE_SIZE);
+  const total    = filteredOrders.length;
+
+  document.getElementById("tableMeta").textContent =
+    `إجمالي ${total} طلب — الصفحة ${currentPage} من ${Math.ceil(total/PAGE_SIZE) || 1}`;
+
+  if (pageData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">
+      لا توجد طلبات في هذه الحالة حالياً
+    </td></tr>`;
+    renderPagination(total);
+    return;
+  }
+
+  tbody.innerHTML = pageData.map(o => {
+    const st = STATUSES[o.slug];
+    const dateStr = o.date.toLocaleDateString("ar-LY", {month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+    const routeTag = o.route === "branch"
+      ? `<span class="route-tag" style="color:#7F77DD;border-color:#7F77DD44">فروع</span>`
+      : `<span class="route-tag">مدينة</span>`;
+
+    // Action buttons based on slug
+    let actions = `<button class="act-btn" onclick="openDetail(${o.id})">تفاصيل</button>`;
+    if (o.slug === "return_warehouse") {
+      actions += `<button class="act-btn success" onclick="openResend('${o.code}')">🔁 إعادة</button>`;
+    }
+    if (!["delivered","return_received","null_order"].includes(o.slug)) {
+      actions += `<button class="act-btn danger" onclick="cancelOrder('${o.code}')">إلغاء</button>`;
+    }
+
+    return `<tr class="fade-up">
+      <td><span class="tracking-num" onclick="openDetail(${o.id})">${o.code}</span></td>
+      <td>
+        <div style="font-weight:600;font-size:12px">${o.receiver}</div>
+        <div style="font-size:10px;color:var(--muted);direction:ltr;text-align:right">${o.phone1}</div>
+      </td>
+      <td>${routeTag}</td>
+      <td><span class="pill" style="background:${st.bg};color:${st.color}">${st.emoji} ${st.label}</span></td>
+      <td style="font-family:'Tajawal',sans-serif;font-weight:700;color:var(--green)">${o.amount.toLocaleString()} د.ل</td>
+      <td style="font-size:11px">${o.captain || '<span style="color:var(--muted)">—</span>'}</td>
+      <td style="font-size:11px;color:var(--muted);white-space:nowrap">${dateStr}</td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join("");
+
+  renderPagination(total);
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGINATION
+// ═══════════════════════════════════════════════════════
+function renderPagination(total) {
+  const pages   = Math.ceil(total / PAGE_SIZE);
+  const info    = document.getElementById("paginationInfo");
+  const btnWrap = document.getElementById("pageBtns");
+  const start   = (currentPage-1)*PAGE_SIZE + 1;
+  const end     = Math.min(currentPage*PAGE_SIZE, total);
+
+  info.textContent = total > 0 ? `عرض ${start}–${end} من ${total}` : "لا توجد نتائج";
+
+  if (pages <= 1) { btnWrap.innerHTML = ""; return; }
+
+  let html = "";
+  if (currentPage > 1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || Math.abs(i - currentPage) <= 1) {
+      html += `<button class="page-btn${i===currentPage?" active":""}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span style="color:var(--muted);padding:0 4px">…</span>`;
+    }
+  }
+
+  if (currentPage < pages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">›</button>`;
+  btnWrap.innerHTML = html;
+}
+
+function goPage(p) { currentPage = p; renderTable(); window.scrollTo(0,0); }
+
+// ═══════════════════════════════════════════════════════
+//  DETAIL PANEL
+// ═══════════════════════════════════════════════════════
+function openDetail(id) {
+  const o  = allOrders.find(x => x.id === id);
+  if (!o) return;
+  const st = STATUSES[o.slug];
+
+  document.getElementById("panelTitle").textContent = `طلب ${o.code}`;
+
+  // Build timeline
+  const timeline = buildTimeline(o.slug);
+
+  document.getElementById("panelBody").innerHTML = `
+    <div style="margin-bottom:16px;">
+      <span class="pill" style="background:${st.bg};color:${st.color};font-size:13px;padding:6px 14px">
+        ${st.emoji} ${st.label}
+      </span>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;">معلومات الطلب</div>
+    <div class="info-row"><span class="info-key">كود الطلب</span><span class="info-val" style="color:var(--blue);font-family:monospace">${o.code}</span></div>
+    <div class="info-row"><span class="info-key">الباركود</span><span class="info-val" style="font-family:monospace;font-size:11px">${o.bar_code}</span></div>
+    <div class="info-row"><span class="info-key">الفاتورة</span><span class="info-val">${o.invoice}</span></div>
+    <div class="info-row"><span class="info-key">المسار</span><span class="info-val">${o.route === "branch" ? "🏢 مسار الفروع" : "🏙️ مسار المدينة"}</span></div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin:16px 0 8px;">بيانات المستلم</div>
+    <div class="info-row"><span class="info-key">الاسم</span><span class="info-val">${o.receiver}</span></div>
+    <div class="info-row"><span class="info-key">الهاتف</span><span class="info-val" style="direction:ltr;text-align:left">${o.phone1}</span></div>
+    <div class="info-row"><span class="info-key">المحافظة</span><span class="info-val">${o.government} — ${o.area}</span></div>
+    <div class="info-row"><span class="info-key">المبلغ</span><span class="info-val" style="color:var(--green)">${o.amount.toLocaleString()} د.ل</span></div>
+
+    ${o.captain ? `
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin:16px 0 8px;">بيانات المندوب</div>
+    <div class="info-row"><span class="info-key">الاسم</span><span class="info-val">${o.captain}</span></div>
+    <div class="info-row"><span class="info-key">الهاتف</span><span class="info-val" style="direction:ltr;text-align:left">${o.captain_phone}</span></div>
+    ` : ""}
+
+    ${o.return_reason ? `
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin:16px 0 8px;">سبب الإرجاع</div>
+    <div style="background:var(--red-bg,rgba(255,92,92,.1));border:1px solid rgba(255,92,92,.2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--red)">
+      ↩️ ${o.return_reason}
+    </div>
+    ` : ""}
+
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin:16px 0 12px;">مسار الحالات</div>
+    <div class="timeline">${timeline}</div>
+
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;font-size:12px;" onclick="printStickerFor(${o.id})">🏷️ طباعة ستيكر</button>
+      ${o.slug === "return_warehouse" ? `<button class="btn btn-primary" style="flex:1;justify-content:center;font-size:12px;" onclick="openResend('${o.code}')">🔁 إعادة إرسال</button>` : ""}
+    </div>
+  `;
+
+  document.getElementById("overlay").classList.add("show");
+  document.getElementById("detailPanel").classList.add("show");
+}
+
+function buildTimeline(currentSlug) {
+  const paths = {
+    city:   ["sent_from_store","saved","in_company","with_agent","delivered"],
+    branch: ["sent_from_store","saved","in_company","to_branch","arrived_branch","with_agent","delivered"],
+    return_city:   ["with_agent","return_agent","return_warehouse","return_received"],
+    return_branch: ["with_agent","return_agent","return_arrived_branch","return_to_company","return_in_company","return_received"],
+  };
+
+  let path = paths.city;
+  if (["to_branch","arrived_branch","return_arrived_branch","return_to_company","return_in_company"].includes(currentSlug)) path = paths.branch;
+  if (["return_agent","return_warehouse","return_received"].includes(currentSlug)) path = paths.return_city;
+  if (["return_arrived_branch","return_to_company","return_in_company"].includes(currentSlug)) path = paths.return_branch;
+
+  const currentIdx = path.indexOf(currentSlug);
+
+  return path.map((slug, i) => {
+    const st      = STATUSES[slug];
+    const isDone  = i < currentIdx;
+    const isCur   = i === currentIdx;
+    const dotColor= isDone || isCur ? st.color : "var(--border2)";
+    const opacity = isDone || isCur ? "1" : "0.4";
+
+    return `<div class="tl-item" style="opacity:${opacity}">
+      <div class="tl-dot${isCur?" active":""}" style="background:${dotColor};border-color:${isCur?"var(--bg2)":"transparent"}"></div>
+      <div class="tl-label" style="color:${isCur ? st.color : "var(--text)"}">${st.emoji} ${st.label}</div>
+      ${isCur ? '<div class="tl-time" style="color:var(--accent2)">● الحالة الحالية</div>' : ""}
+      ${isDone ? '<div class="tl-time">✓ مكتمل</div>' : ""}
+    </div>`;
+  }).join("");
+}
+
+function closePanel() {
+  document.getElementById("overlay").classList.remove("show");
+  document.getElementById("detailPanel").classList.remove("show");
+}
+
+// ═══════════════════════════════════════════════════════
+//  RESEND
+// ═══════════════════════════════════════════════════════
+function openResend(code) {
+  resendTarget = code;
+  document.getElementById("resendOrderInfo").textContent = `الطلب: ${code}`;
+  document.getElementById("resendType").value = "1";
+  document.getElementById("newCodeField").style.display = "none";
+  document.getElementById("resendModal").classList.add("show");
+}
+
+function closeResend() {
+  document.getElementById("resendModal").classList.remove("show");
+  resendTarget = null;
+}
+
+function toggleNewCode() {
+  const t = document.getElementById("resendType").value;
+  document.getElementById("newCodeField").style.display = t === "2" ? "block" : "none";
+}
+
+async function confirmResend() {
+  if (!resendTarget) return;
+  const type      = document.getElementById("resendType").value;
+  const newCode   = document.getElementById("newOrderCode").value.trim();
+
+  if (type === "2" && !newCode) {
+    alert("يرجى إدخال كود الطرد الجديد"); return;
+  }
+
+  try {
+    const body = new URLSearchParams({
+      authentication_key: AUTH_KEY,
+      main_client_code:   CLIENT_CODE,
+      code:  resendTarget,
+      type,
+      ...(type === "2" ? { order_code: newCode } : {}),
+    });
+
+    const res  = await fetch(`${BASE_URL}/resend-request`, {
+      method:"POST",
+      headers:{ "Accept":"application/json","Content-Type":"application/x-www-form-urlencoded" },
+      body: body.toString(),
+    });
+    const data = await res.json();
+
+    if (data.success === 1) {
+      closeResend(); closePanel();
+      showToast("✅ تم إعادة الإرسال بنجاح");
+      // Update local state
+      const o = allOrders.find(x => x.code === resendTarget);
+      if (o) o.slug = "resent";
+      filterOrders(); updateCounts();
+    } else {
+      showToast("❌ " + (data.error_msg || "فشل الإرسال"), "error");
+    }
+  } catch(e) {
+    // Demo
+    closeResend(); closePanel();
+    showToast("✅ تم إعادة الإرسال (وضع تجريبي)");
+    const o = allOrders.find(x => x.code === resendTarget);
+    if (o) o.slug = "resent";
+    filterOrders(); updateCounts();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  CANCEL ORDER
+// ═══════════════════════════════════════════════════════
+async function cancelOrder(code) {
+  if (!confirm(`هل تريد إلغاء الطلب ${code}؟`)) return;
+  try {
+    const body = new URLSearchParams({
+      authentication_key: AUTH_KEY,
+      main_client_code:   CLIENT_CODE,
+      code, type: "1",
+    });
+    const res  = await fetch(`${BASE_URL}/canceled`, {
+      method:"POST",
+      headers:{ "Accept":"application/json","Content-Type":"application/x-www-form-urlencoded" },
+      body: body.toString(),
+    });
+    const data = await res.json();
+    if (data.success === 1) {
+      showToast("✅ تم إلغاء الطلب بنجاح");
+      allOrders = allOrders.filter(o => o.code !== code);
+      filterOrders(); updateCounts();
+    } else {
+      showToast("❌ " + (data.error_msg || "فشل الإلغاء"),"error");
+    }
+  } catch(e) {
+    showToast("✅ تم الإلغاء (وضع تجريبي)");
+    allOrders = allOrders.filter(o => o.code !== code);
+    filterOrders(); updateCounts();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  PRINT STICKER
+// ═══════════════════════════════════════════════════════
+function printStickerFor(id) {
+  const o = allOrders.find(x => x.id === id);
+  if (!o) return;
+  const w = window.open("","_blank","width=420,height=580");
+  w.document.write(`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
+  <title>ستيكر ${o.code}</title>
+  <style>
+    body{font-family:Cairo,sans-serif;padding:20px;background:#fff;color:#111}
+    .s{border:2px solid #111;border-radius:8px;padding:16px;max-width:340px}
+    .logo{font-size:20px;font-weight:900;color:#e63030;margin-bottom:10px}
+    .bc{font-size:22px;font-weight:900;letter-spacing:4px;text-align:center;
+        margin:10px 0;border:1px dashed #999;padding:8px;border-radius:4px}
+    .row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;border-bottom:0.5px solid #eee;padding-bottom:5px}
+    .lbl{color:#666}.val{font-weight:700}
+    .amt{font-size:20px;font-weight:900;color:#e63030;text-align:center;
+         background:#111;color:#fff;padding:10px;border-radius:4px;margin-top:10px}
+  </style></head><body>
+  <div class="s">
+    <div class="logo">ZTM — منظومة الشحن</div>
+    <div class="bc">${o.bar_code}</div>
+    <div class="row"><span class="lbl">الطلب</span><span class="val">${o.code}</span></div>
+    <div class="row"><span class="lbl">المستلم</span><span class="val">${o.receiver}</span></div>
+    <div class="row"><span class="lbl">الهاتف</span><span class="val" style="direction:ltr">${o.phone1}</span></div>
+    <div class="row"><span class="lbl">المحافظة</span><span class="val">${o.government}</span></div>
+    <div class="row"><span class="lbl">الفاتورة</span><span class="val">${o.invoice}</span></div>
+    <div class="amt">للتحصيل: ${o.amount.toLocaleString()} د.ل</div>
+  </div>
+  <script>window.onload=()=>window.print()<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════════════════════
+function exportCSV() {
+  const data   = filteredOrders;
+  const st     = STATUSES[currentSlug] || STATUSES.all;
+  const header = ["كود الطلب","الباركود","المستلم","الهاتف","المحافظة","الحالة","المسار","المبلغ","التاريخ"];
+  const rows   = data.map(o => [
+    o.code, o.bar_code, o.receiver, o.phone1, o.government,
+    STATUSES[o.slug]?.label, o.route === "branch" ? "فروع" : "مدينة",
+    o.amount, o.date.toLocaleDateString("ar-LY"),
+  ]);
+  const csv = [header, ...rows].map(r => r.join(",")).join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type:"text/csv;charset=utf-8;" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url; a.download = `ZTM-${st.label}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════
+//  REFRESH
+// ═══════════════════════════════════════════════════════
+async function refreshOrders() {
+  showToast("🔄 جارٍ تحديث البيانات...", "info");
+  // في الإنتاج: استدعِ API هنا
+  setTimeout(() => {
+    showToast("✅ تم التحديث بنجاح");
+  }, 1200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type="success") {
+  let t = document.getElementById("globalToast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "globalToast";
+    t.style.cssText = `
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:var(--card);border:1px solid var(--border2);border-radius:12px;
+      padding:12px 20px;font-size:13px;font-weight:500;z-index:999;
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+      font-family:Cairo,sans-serif;color:var(--text);
+      box-shadow:0 8px 32px rgba(0,0,0,.4);min-width:260px;text-align:center;
+    `;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.borderColor = type === "error" ? "var(--red)" : type === "info" ? "var(--blue)" : "var(--green)";
+  t.style.transform = "translateX(-50%) translateY(0)";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.transform = "translateX(-50%) translateY(80px)"; }, 3500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener("DOMContentLoaded", () => {
+  initTabs();
+  allOrders = generateDemoOrders();
+  updateCounts();
+  updateStats();
+  filterOrders();
+  showToast("✅ تم تحميل البيانات — وضع تجريبي", "info");
+});
+</script>
+</body>
+</html>
